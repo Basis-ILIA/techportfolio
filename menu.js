@@ -84,8 +84,7 @@ const NAV_ITEMS = [
 const PORTFOLIO_META = {
   eyebrow: 'Basis Technology',
   title: 'Tech Portfolio',
-  lede: 'Roadmap, program status, and reference materials for the Basis Technology sector. ' +
-        'Replace this lede in menu.js → PORTFOLIO_META.lede with your own copy.',
-  lastUpdated: 'May 26, 2026',
-  owner: 'Basis Technology',
+  lede: 'Roadmap, program statuses, and other reference materials for the Basis Technology sector.',
+  lastUpdated: 'May 27, 2026',
+  owner: '© 2026 Basis Global Technologies, LLC',
 };
