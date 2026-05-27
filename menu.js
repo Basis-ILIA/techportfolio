@@ -50,6 +50,15 @@ const NAV_ITEMS = [
     desc: 'Automated two-way ERP integration between Basis and Prisma (Mediaocean). Pilot and PSD phase.',
     status: 'active',
   },
+  
+    {
+    id: 'prod-kpi',
+    label: 'Production KPI Dashboard',
+    href: 'prod-kpi-dashboard.html',
+    section: 'Production KPI Dashboard',
+    desc: 'Dashboard for Prod support & incident KPIs',
+    status: 'active',
+  },
 
   // ─── Add new program status pages below this line ───
   //

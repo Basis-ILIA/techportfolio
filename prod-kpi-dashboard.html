@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROD Support & Incident KPIs · Basis</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNSIgZmlsbD0iIzBkMTExNyIvPjxyZWN0IHg9IjQiIHk9IjYiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMS41IiBmaWxsPSIjZjg1MTQ5Ii8+PHJlY3QgeD0iMTMiIHk9IjEzIiB3aWR0aD0iNyIgaGVpZ2h0PSIxMyIgcng9IjEuNSIgZmlsbD0iI2UzYjM0MSIvPjxyZWN0IHg9IjIyIiB5PSIxOCIgd2lkdGg9IjciIGhlaWdodD0iOCIgcng9IjEuNSIgZmlsbD0iIzU4YTZmZiIvPjxyZWN0IHg9IjQiIHk9IjI3IiB3aWR0aD0iMjUiIGhlaWdodD0iMS41IiByeD0iMC43NSIgZmlsbD0iIzMwMzYzZCIvPjwvc3ZnPg==">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
+  --border:#30363d;--border2:#484f58;
+  --text:#e6edf3;--muted:#8b949e;--muted2:#6e7681;
+  --accent:#58a6ff;--green:#3fb950;--yellow:#d29922;
+  --red:#f85149;--orange:#e3b341;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── Topbar ── */
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;flex-wrap:wrap}
+.topbar-title{font-size:15px;font-weight:600;flex:1;white-space:nowrap}
+.topbar-title span{color:var(--muted);font-weight:400}
+.btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--border2)}
+.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-accent:hover{opacity:.9}
+select.q-select{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer}
+.last-updated{font-size:11px;color:var(--muted);white-space:nowrap}
+
+/* ── Main layout ── */
+.main{max-width:1400px;margin:0 auto;padding:20px 24px}
+
+/* ── Import card ── */
+.import-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:20px;overflow:hidden}
+.import-toggle{display:flex;align-items:center;gap:10px;padding:12px 18px;cursor:pointer;user-select:none}
+.import-toggle:hover{background:var(--surface2)}
+.import-toggle-label{font-weight:500;flex:1;font-size:13px}
+.import-toggle-arrow{color:var(--muted);font-size:11px;transition:transform .2s}
+.import-body{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--border)}
+.drop-zone{border:2px dashed var(--border2);border-radius:8px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface2);position:relative}
+.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(88,166,255,.06)}
+.drop-zone.loaded{border-color:var(--green);background:rgba(63,185,80,.06)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-icon{font-size:26px;margin-bottom:8px}
+.dz-label{font-weight:500;font-size:13px;margin-bottom:4px}
+.dz-sub{font-size:11px;color:var(--muted)}
+.dz-loaded{color:var(--green);font-size:12px;font-weight:500}
+.jql-guide{grid-column:1/-1;background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.jql-guide summary{padding:10px 14px;cursor:pointer;font-size:12px;color:var(--muted);font-weight:500;list-style:none;display:flex;align-items:center;gap:6px}
+.jql-guide summary::before{content:'▸';font-size:10px;transition:transform .2s}
+.jql-guide[open] summary::before{content:'▾'}
+.jql-inner{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;border-top:1px solid var(--border)}
+.jql-block label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.jql-block code{display:block;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-family:'SF Mono',Consolas,monospace;font-size:11px;color:var(--accent);white-space:pre-wrap;word-break:break-all;cursor:text;user-select:all}
+.jql-note{grid-column:1/-1;font-size:11px;color:var(--muted);padding-top:4px}
+
+/* ── Summary cards ── */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px}
+.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:600}
+.kpi-value{font-size:34px;font-weight:700;line-height:1;margin-bottom:4px;font-variant-numeric:tabular-nums}
+.kpi-sub{font-size:11px;color:var(--muted)}
+
+/* ── Charts ── */
+.charts-grid{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:20px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 20px}
+.chart-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:14px}
+.chart-wrap{position:relative;height:220px}
+
+/* ── Section cards ── */
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;overflow:hidden}
+.sec-head{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border)}
+.sec-title{font-weight:600;font-size:13px;flex:1}
+.sec-badge{font-size:11px;color:var(--muted);background:var(--surface2);padding:2px 9px;border-radius:10px;border:1px solid var(--border)}
+.sec-body{padding:18px}
+
+/* ── Tables ── */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--border)}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:13px}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface2)}
+.tr-total td{border-top:2px solid var(--border2);font-weight:600}
+.num{text-align:right;font-variant-numeric:tabular-nums;font-family:'SF Mono',Consolas,monospace;font-size:12px}
+
+/* ── Severity chips ── */
+.chip{display:inline-flex;align-items:center;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500}
+.chip-l1{background:rgba(248,81,73,.15);color:#f85149}
+.chip-l2{background:rgba(227,179,65,.15);color:#e3b341}
+.chip-l3{background:rgba(210,153,34,.15);color:#d29922}
+.chip-l4{background:rgba(88,166,255,.15);color:#58a6ff}
+.chip-l5{background:rgba(139,148,158,.15);color:#8b949e}
+
+/* ── Compliance colors ── */
+.ok{color:var(--green);font-weight:500}
+.warn{color:var(--yellow);font-weight:500}
+.bad{color:var(--red);font-weight:500}
+
+/* ── Two-col splits ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.split-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:600;margin-bottom:8px}
+
+/* ── Manual inputs ── */
+.input-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:14px}
+.input-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+.input-field input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;color:var(--text);font-size:13px}
+.input-field input:focus{outline:none;border-color:var(--accent)}
+.input-field input[readonly]{color:var(--green)}
+.input-field input::placeholder{color:var(--muted2)}
+.save-btn{margin-top:12px;padding:7px 18px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600}
+.save-btn:hover{opacity:.9}
+.save-confirm{display:none;font-size:12px;color:var(--green);margin-left:10px}
+
+/* ── Textarea ── */
+.big-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:12px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical;min-height:110px;line-height:1.6}
+.big-textarea:focus{outline:none;border-color:var(--accent)}
+
+/* ── Empty state ── */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty p{font-size:12px}
+
+/* ── Uptime ── */
+.uptime-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+
+/* ── Schedule info bar ── */
+.schedule-bar{display:none;align-items:center;gap:16px;padding:9px 24px;background:rgba(88,166,255,.06);border-bottom:1px solid rgba(88,166,255,.15);font-size:12px;color:var(--muted);flex-wrap:wrap}
+.schedule-bar .sb-item{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.schedule-bar .sb-cmd{font-family:'SF Mono',Consolas,monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--text);cursor:pointer;user-select:all}
+.schedule-bar .sb-cmd:hover{border-color:var(--accent)}
+.sb-copy{font-size:10px;color:var(--accent);cursor:pointer;text-decoration:none;white-space:nowrap}
+.sb-copy:hover{text-decoration:underline}
+
+/* ── Jira section links ── */
+.sec-jira-link{font-size:11px;color:var(--accent);text-decoration:none;white-space:nowrap;margin-right:8px}
+.sec-jira-link:hover{text-decoration:underline}
+
+/* ── Warning banner ── */
+.warn-banner{font-size:12px;color:var(--yellow);background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.25);border-radius:6px;padding:8px 12px;margin-top:12px}
+
+/* ── Responsive ── */
+@media(max-width:1000px){.charts-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.summary-grid{grid-template-columns:1fr}.import-body{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.input-grid{grid-template-columns:repeat(2,1fr)}.uptime-grid{grid-template-columns:repeat(2,1fr)}.jql-inner{grid-template-columns:1fr}}
+@media print{.topbar .btn,.import-card{display:none}body,html{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="topbar-title">PROD Support &amp; Incident KPIs <span>· Basis</span></div>
+  <select class="q-select" id="quarterSelect">
+    <option>Q2 2026</option><option>Q3 2026</option><option>Q4 2026</option><option>Q1 2027</option>
+  </select>
+  <span class="last-updated" id="lastUpdated" style="display:none"></span>
+  <button class="btn" onclick="clearData()" title="Clear all imported CSV data">Clear Data</button>
+  <button class="btn" onclick="window.print()">Print / Export PDF</button>
+</div>
+
+<!-- ═══ SCHEDULE BAR ═══ -->
+<div class="schedule-bar" id="scheduleBar">
+  <div class="sb-item">⏰ <strong style="color:var(--text)">Auto-refreshes every Monday at 8:00 AM</strong></div>
+  <div class="sb-item" style="color:var(--border2)">|</div>
+  <div class="sb-item">To refresh now, run:
+    <code class="sb-cmd" id="runCmd" onclick="copyCmd()" title="Click to copy">cd ~/Library/CloudStorage/OneDrive-Basis/Documents/nick-dev &amp;&amp; python3 fetch-prod-kpi.py</code>
+    <span class="sb-copy" onclick="copyCmd()" id="copyLabel">Copy</span>
+  </div>
+</div>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- ── Import ── -->
+  <div class="import-card">
+    <div class="import-toggle" onclick="toggleImport()">
+      <span style="font-size:16px">📥</span>
+      <span class="import-toggle-label">Import Jira Data</span>
+      <span style="font-size:12px;color:var(--muted)" id="importStatus">Drop CSV files exported from Jira to populate the dashboard</span>
+      <span class="import-toggle-arrow" id="importArrow">▾</span>
+    </div>
+    <div id="importBody" class="import-body">
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Current Quarter</div>
+        <div class="drop-zone" id="dzCurrent"
+          ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'current')"
+          onclick="document.getElementById('fileCurrent').click()">
+          <input type="file" id="fileCurrent" accept=".csv" onchange="fileInput(event,'current')">
+          <div class="dz-icon">📂</div>
+          <div class="dz-label" id="currentLabel">Drop CSV or click to browse</div>
+          <div class="dz-sub">Jira → Issues → Export → Excel CSV (all fields)</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Prior Quarter <span style="font-weight:400;text-transform:none">(optional — enables QoQ comparison)</span></div>
+        <div class="drop-zone" id="dzPrev"
+          ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'prev')"
+          onclick="document.getElementById('filePrev').click()">
+          <input type="file" id="filePrev" accept=".csv" onchange="fileInput(event,'prev')">
+          <div class="dz-icon">📂</div>
+          <div class="dz-label" id="prevLabel">Drop CSV or click to browse</div>
+          <div class="dz-sub">Previous quarter for trend comparison</div>
+        </div>
+      </div>
+      <details class="jql-guide">
+        <summary>How to export from Jira</summary>
+        <div class="jql-inner">
+          <div class="jql-block">
+            <label>Current Quarter JQL (Q2 2026)</label>
+            <code>project = PROD AND issuetype = "PROD ISSUE" AND created >= "2026-04-01" AND created <= "2026-06-30"</code>
+          </div>
+          <div class="jql-block">
+            <label>Prior Quarter JQL (Q1 2026)</label>
+            <code>project = PROD AND issuetype = "PROD ISSUE" AND created >= "2026-01-01" AND created <= "2026-03-31"</code>
+          </div>
+          <div class="jql-note">
+            In Jira: open the <a href="https://basis.atlassian.net/jira/software/c/projects/PROD/boards/65" target="_blank" style="color:var(--accent)">PROD board</a> → switch to <strong>List view</strong> → enter JQL → click <strong>Export → Export Excel CSV (all fields)</strong>. Ensure Severity, Due date, and Resolved columns are included in the export.
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- ── KPI Summary Cards ── -->
+  <div class="summary-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Incidents</div>
+      <div class="kpi-value" id="cTotal" style="color:var(--text)">—</div>
+      <div class="kpi-sub" id="cTotalSub">Import CSV to populate</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Open Issues</div>
+      <div class="kpi-value" id="cOpen" style="color:var(--yellow)">—</div>
+      <div class="kpi-sub" id="cOpenSub">Unresolved this quarter</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Resolution SLA Compliance</div>
+      <div class="kpi-value" id="cSLA" style="color:var(--green)">—</div>
+      <div class="kpi-sub" id="cSLASub">Resolved on or before due date</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Customer Impacting</div>
+      <div class="kpi-value" id="cCust" style="color:var(--accent)">—</div>
+      <div class="kpi-sub" id="cCustSub">Impact Accounts = Yes</div>
+    </div>
+  </div>
+
+  <!-- ── Charts ── -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Incident Frequency by Severity</div>
+      <div class="chart-sub" id="freqSub">Current vs Prior Quarter</div>
+      <div class="chart-wrap"><canvas id="freqChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Resolution SLA Compliance</div>
+      <div class="chart-sub">Issues resolved on or before due date</div>
+      <div class="chart-wrap"><canvas id="slaDonut"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ── 1. Incident Frequency ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">1 · Incident Frequency</div>
+      <a class="sec-jira-link" id="jiraLink1" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Auto · CSV</span>
+    </div>
+    <div class="sec-body" id="freqSection">
+      <div class="empty"><div class="empty-icon">📊</div><p>Import a CSV to populate this section</p></div>
+    </div>
+  </div>
+
+  <!-- ── 2. SLA Compliance ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">2 · SLA Compliance — Resolution</div>
+      <a class="sec-jira-link" id="jiraLink2" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Auto · CSV</span>
+    </div>
+    <div class="sec-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">% of issues resolved on or before their due date. Requires due dates set per severity SLA (L3: +5 biz days, L4: +15 biz days, L5: +30 days).</p>
+      <div id="slaSection"><div class="empty"><div class="empty-icon">📋</div><p>Import a CSV to populate this section</p></div></div>
+    </div>
+  </div>
+
+  <!-- ── 3. Incident Response Time ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">3 · Incident Response Time</div>
+      <a class="sec-jira-link" id="jiraLink3" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Manual · Enter Below</span>
+    </div>
+    <div class="sec-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Time from ticket creation to first status transition out of <em>To Do / Open</em>. Automatically calculated from the Jira changelog API for all issues this quarter.</p>
+      <table>
+        <thead><tr>
+          <th>Severity</th><th>SLA Target</th>
+          <th style="text-align:right">Avg Response</th>
+          <th style="text-align:right">% Within SLA</th>
+          <th style="text-align:right">Status</th>
+        </tr></thead>
+        <tbody id="responseBody"></tbody>
+      </table>
+      <div style="margin-top:20px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Enter Response Time Data</div>
+        <div class="input-grid">
+          <div class="input-field"><label>L1 Avg (min)</label><input type="number" id="rt_l1" placeholder="e.g. 12" min="0"></div>
+          <div class="input-field"><label>L2 Avg (min)</label><input type="number" id="rt_l2" placeholder="e.g. 25" min="0"></div>
+          <div class="input-field"><label>L3 Avg (min)</label><input type="number" id="rt_l3" placeholder="e.g. 48" min="0"></div>
+          <div class="input-field"><label>L4 Avg (hrs)</label><input type="number" id="rt_l4" placeholder="e.g. 18" min="0"></div>
+          <div class="input-field"><label>L5 Avg (hrs)</label><input type="number" id="rt_l5" placeholder="e.g. 72" min="0"></div>
+          <div class="input-field"><label>L1 % in SLA</label><input type="number" id="rp_l1" placeholder="e.g. 85" min="0" max="100"></div>
+          <div class="input-field"><label>L2 % in SLA</label><input type="number" id="rp_l2" placeholder="e.g. 90" min="0" max="100"></div>
+          <div class="input-field"><label>L3 % in SLA</label><input type="number" id="rp_l3" placeholder="e.g. 78" min="0" max="100"></div>
+          <div class="input-field"><label>L4 % in SLA</label><input type="number" id="rp_l4" placeholder="e.g. 82" min="0" max="100"></div>
+          <div class="input-field"><label>L5 % in SLA</label><input type="number" id="rp_l5" placeholder="e.g. 95" min="0" max="100"></div>
+        </div>
+        <button class="save-btn" onclick="saveResponse()">Save</button>
+        <span class="save-confirm" id="rtConfirm">✓ Saved</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. MTTD ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">4 · MTTD / Time to First Response</div>
+      <a class="sec-jira-link" id="jiraLink4" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Manual · Enter Below</span>
+    </div>
+    <div class="sec-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Proxy metric: average time from ticket creation to first team acknowledgment. True MTTD (from incident start) isn't captured in Jira — <code style="font-size:11px">created</code> timestamp serves as the detection proxy. Automatically calculated from the Jira changelog API.</p>
+      <table>
+        <thead><tr>
+          <th>Severity</th>
+          <th style="text-align:right">Current Quarter</th>
+          <th style="text-align:right">Prior Quarter</th>
+          <th style="text-align:right">Trend</th>
+        </tr></thead>
+        <tbody id="mttdBody"></tbody>
+      </table>
+      <div style="margin-top:20px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Enter MTTD Data</div>
+        <div class="input-grid">
+          <div class="input-field"><label>L1 Current (min)</label><input type="number" id="md_l1" placeholder="e.g. 8" min="0"></div>
+          <div class="input-field"><label>L2 Current (min)</label><input type="number" id="md_l2" placeholder="e.g. 22" min="0"></div>
+          <div class="input-field"><label>L3 Current (min)</label><input type="number" id="md_l3" placeholder="e.g. 45" min="0"></div>
+          <div class="input-field"><label>L4 Current (hrs)</label><input type="number" id="md_l4" placeholder="e.g. 12" min="0"></div>
+          <div class="input-field" style="visibility:hidden"></div>
+          <div class="input-field"><label>L1 Prior Q (min)</label><input type="number" id="mp_l1" placeholder="e.g. 10" min="0"></div>
+          <div class="input-field"><label>L2 Prior Q (min)</label><input type="number" id="mp_l2" placeholder="e.g. 28" min="0"></div>
+          <div class="input-field"><label>L3 Prior Q (min)</label><input type="number" id="mp_l3" placeholder="e.g. 55" min="0"></div>
+          <div class="input-field"><label>L4 Prior Q (hrs)</label><input type="number" id="mp_l4" placeholder="e.g. 15" min="0"></div>
+          <div class="input-field" style="visibility:hidden"></div>
+        </div>
+        <button class="save-btn" onclick="saveMTTD()">Save</button>
+        <span class="save-confirm" id="mttdConfirm">✓ Saved</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 5. Customer Impact ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">5 · Customer Impact Summary</div>
+      <a class="sec-jira-link" id="jiraLink5" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Auto · CSV</span>
+    </div>
+    <div class="sec-body" id="custSection">
+      <div class="empty"><div class="empty-icon">👥</div><p>Import a CSV to populate this section</p></div>
+    </div>
+  </div>
+
+  <!-- ── 6. Reporter Breakdown ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">6 · Reporter Breakdown</div>
+      <a class="sec-jira-link" id="jiraLink6r" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Auto · CSV</span>
+    </div>
+    <div class="sec-body" id="reporterSection">
+      <div class="empty"><div class="empty-icon">👤</div><p>Import a CSV to populate this section</p></div>
+    </div>
+  </div>
+
+  <!-- ── 7. Uptime SLA ── -->
+  <div class="sec">
+    <div class="sec-head">
+      <div class="sec-title">7 · 99.5% Uptime SLA Tracking</div>
+      <a class="sec-jira-link" id="jiraLink7" href="#" target="_blank" style="display:none">View in Jira ↗</a>
+      <span class="sec-badge">Manual</span>
+    </div>
+    <div class="sec-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Basis guarantees <strong>99.5% platform availability</strong> per calendar quarter (8 AM – 9 PM ET, Mon–Sun, excluding scheduled maintenance and force majeure). Track L1/L2 downtime against this SLA.</p>
+      <div class="uptime-grid" id="uptimeManual">
+        <div class="input-field"><label>Total Covered Hours</label><input type="number" id="ut_hours" placeholder="e.g. 1170" min="0" oninput="calcUptime()"></div>
+        <div class="input-field"><label>Hours of Downtime</label><input type="number" id="ut_down" placeholder="e.g. 2.5" min="0" step="0.1" oninput="calcUptime()"></div>
+        <div class="input-field"><label>Availability %</label><input type="text" id="ut_pct" readonly placeholder="Auto-calculated"></div>
+        <div class="input-field"><label>SLA Met?</label><input type="text" id="ut_met" readonly placeholder="Auto-calculated"></div>
+      </div>
+      <button class="save-btn" style="margin-top:12px" onclick="saveUptime()">Save</button>
+      <span class="save-confirm" id="uptimeConfirm">✓ Saved</span>
+      <div id="uptimeAutoDisplay" style="display:none"></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:20px;color:var(--muted2);font-size:11px;border-top:1px solid var(--border);margin-top:8px">
+    PROD Support &amp; Incident KPIs · Basis · <span id="footerQ">Q2 2026</span> ·
+    <a href="https://basis.atlassian.net/wiki/spaces/~nicholas.geniusz/pages/1790672906" target="_blank" style="color:var(--accent);text-decoration:none">Setup Guide</a> ·
+    <a href="https://basis.atlassian.net/jira/software/c/projects/PROD/boards/65" target="_blank" style="color:var(--accent);text-decoration:none">PROD Board</a> ·
+    <a href="https://basis.atlassian.net/wiki/spaces/CTP/pages/1384841221" target="_blank" style="color:var(--accent);text-decoration:none">Process Doc</a>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  Constants
+// ═══════════════════════════════════════════════════════
+const SEVS = ['Level 1','Level 2','Level 3','Level 4','Level 5'];
+const SEV_COLOR = {'Level 1':'#f85149','Level 2':'#e3b341','Level 3':'#d29922','Level 4':'#58a6ff','Level 5':'#8b949e'};
+const SEV_LABEL = {'Level 1':'L1 — Critical','Level 2':'L2 — Major','Level 3':'L3 — Partial','Level 4':'L4 — Minor','Level 5':'L5 — Cosmetic'};
+const SEV_CHIP  = {'Level 1':'chip chip-l1','Level 2':'chip chip-l2','Level 3':'chip chip-l3','Level 4':'chip chip-l4','Level 5':'chip chip-l5'};
+const RT_SLA    = {'Level 1':'15 min','Level 2':'30 min','Level 3':'1 hour','Level 4':'2 days','Level 5':'4 days'};
+const RES_SLA   = {'Level 1':'ASAP','Level 2':'ASAP','Level 3':'5 biz days','Level 4':'2–3 weeks','Level 5':'1–2 months'};
+const STORAGE_KEY = 'prodKpi_v2';
+
+// ═══════════════════════════════════════════════════════
+//  State
+// ═══════════════════════════════════════════════════════
+let S = {
+  quarter: 'Q2 2026',
+  currentRows: null,   // serialised for storage
+  prevRows: null,
+  currentM: null,
+  prevM: null,
+  responseData: {},
+  mttdData: {},
+  notables: [{key:'',sev:'—',sum:'',res:'',sla:'—'},{key:'',sev:'—',sum:'',res:'',sla:'—'},{key:'',sev:'—',sum:'',res:'',sla:'—'}],
+  assessment: '',
+  uptimeHours: '',
+  uptimeDown: '',
+  lastUpdated: null,
+};
+let charts = {};
+let importOpen = true;
+
+// ═══════════════════════════════════════════════════════
+//  Startup
+// ═══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.KPI_DATA) {
+    const kd = window.KPI_DATA;
+    S.quarter      = kd.quarter      || S.quarter;
+    S.currentRows  = kd.currentRows  || null;
+    S.prevRows     = kd.prevRows     || null;
+    S.currentM     = kd.currentRows  ? computeMetrics(deserializeRows(kd.currentRows)) : null;
+    S.prevM        = kd.prevRows     ? computeMetrics(deserializeRows(kd.prevRows))    : null;
+    S.responseData = kd.responseData || {};
+    S.mttdData     = kd.mttdData     || {};
+    S.notables     = kd.notables     || S.notables;
+    S.assessment   = kd.assessment   || '';
+    S.uptimeHours  = kd.uptimeHours  !== undefined ? String(kd.uptimeHours) : '';
+    S.uptimeDown   = kd.uptimeDown   !== undefined ? String(kd.uptimeDown)  : '';
+    S.lastUpdated  = kd.generated    || new Date().toISOString();
+  }
+  loadState();
+  document.getElementById('quarterSelect').value = S.quarter;
+  document.getElementById('quarterSelect').onchange = e => {
+    S.quarter = e.target.value;
+    document.getElementById('footerQ').textContent = S.quarter;
+    saveState();
+  };
+  document.getElementById('footerQ').textContent = S.quarter;
+  loadManualInputs();
+  if (window.KPI_DATA) {
+    document.querySelector('.import-card').style.display = 'none';
+    document.querySelectorAll('.input-grid').forEach(e => e.style.display = 'none');
+    document.querySelectorAll('.save-btn').forEach(e => e.style.display = 'none');
+    const qs = el('quarterSelect');
+    qs.disabled = true;
+    qs.style.opacity = '0.5';
+    qs.style.cursor = 'default';
+    document.querySelectorAll('.sec-badge').forEach(e => {
+      if (e.textContent.includes('Manual') || e.textContent === 'Manual') e.textContent = 'Auto · API';
+    });
+    const lu = el('lastUpdated');
+    const gen = new Date(window.KPI_DATA.generated);
+    lu.textContent = 'Auto-updated ' + gen.toLocaleDateString() + ' ' + gen.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    lu.style.display = '';
+    if (S.uptimeHours) el('ut_hours').value = S.uptimeHours;
+    if (S.uptimeDown)  el('ut_down').value  = S.uptimeDown;
+    calcUptime();
+    el('scheduleBar').style.display = 'flex';
+    const base = window.KPI_DATA.jqlCur;
+    [['jiraLink1', base],
+     ['jiraLink2', base + ' AND duedate is not EMPTY'],
+     ['jiraLink3', base + ' AND statusCategory != "To Do"'],
+     ['jiraLink4', base],
+     ['jiraLink5', base + ' AND "Impact Accounts" = Yes'],
+     ['jiraLink6r', base],
+     ['jiraLink7', base + ' AND Severity in ("Level 1","Level 2")'],
+    ].forEach(([id, jql]) => {
+      const a = el(id); if (a) { a.href = buildJiraUrl(jql); a.style.display = ''; }
+    });
+    // Show auto uptime display, hide manual inputs
+    el('uptimeManual').style.display = 'none';
+    document.querySelectorAll('#uptimeConfirm, .save-btn').forEach(e => e.style.display = 'none');
+    const h = parseFloat(S.uptimeHours) || 0;
+    const d = parseFloat(S.uptimeDown)  || 0;
+    const pct = h > 0 ? ((h - d) / h * 100).toFixed(3) : '—';
+    const met = h > 0 && parseFloat(pct) >= 99.5;
+    const slaColor = h > 0 ? (met ? 'var(--green)' : 'var(--red)') : 'var(--muted)';
+    el('uptimeAutoDisplay').style.display = 'grid';
+    el('uptimeAutoDisplay').style.gridTemplateColumns = 'repeat(4,1fr)';
+    el('uptimeAutoDisplay').style.gap = '10px';
+    el('uptimeAutoDisplay').innerHTML = [
+      ['Total Covered Hours', h || '—', 'var(--text)'],
+      ['Hours of Downtime',   d || '0', d > 0 ? 'var(--yellow)' : 'var(--green)'],
+      ['Availability',        h > 0 ? pct + '%' : '—', slaColor],
+      ['SLA Met?',            h > 0 ? (met ? '✓ Yes' : '✗ No') : '—', slaColor],
+    ].map(([label, val, color]) =>
+      `<div class="kpi-card" style="padding:14px 16px">
+        <div class="kpi-label">${label}</div>
+        <div style="font-size:24px;font-weight:700;color:${color};font-variant-numeric:tabular-nums">${val}</div>
+       </div>`
+    ).join('');
+  }
+  renderResponseTable();
+  renderMTTDTable();
+  if (S.currentM) {
+    renderDashboard();
+    toggleImport(false);
+    const el = document.getElementById('lastUpdated');
+    el.textContent = 'Updated ' + new Date(S.lastUpdated).toLocaleDateString();
+    el.style.display = '';
+    document.getElementById('currentLabel').innerHTML = `<span class="dz-loaded">✓ ${S.currentRows.length} issues loaded</span>`;
+    document.getElementById('dzCurrent').classList.add('loaded');
+    if (S.prevM) {
+      document.getElementById('prevLabel').innerHTML = `<span class="dz-loaded">✓ ${S.prevRows.length} issues loaded</span>`;
+      document.getElementById('dzPrev').classList.add('loaded');
+    }
+  }
+  calcUptime();
+});
+
+// ═══════════════════════════════════════════════════════
+//  CSV drop/file handling
+// ═══════════════════════════════════════════════════════
+function dzOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+function dzLeave(e) { e.currentTarget.classList.remove('over'); }
+function dzDrop(e, which) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) processFile(f, which);
+}
+function fileInput(e, which) { const f = e.target.files[0]; if (f) processFile(f, which); }
+
+function processFile(file, which) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    const rows = parseCSV(e.target.result);
+    if (!rows || rows.length === 0) {
+      alert('No rows found. Make sure to use "Export Excel CSV (all fields)" from Jira.');
+      return;
+    }
+    if (which === 'current') {
+      S.currentRows = serializeRows(rows);
+      S.currentM = computeMetrics(rows);
+      S.lastUpdated = new Date().toISOString();
+      document.getElementById('currentLabel').innerHTML = `<span class="dz-loaded">✓ ${rows.length} issues loaded from ${file.name}</span>`;
+      document.getElementById('dzCurrent').classList.add('loaded');
+      const el = document.getElementById('lastUpdated');
+      el.textContent = 'Updated ' + new Date().toLocaleDateString();
+      el.style.display = '';
+    } else {
+      S.prevRows = serializeRows(rows);
+      S.prevM = computeMetrics(rows);
+      document.getElementById('prevLabel').innerHTML = `<span class="dz-loaded">✓ ${rows.length} issues loaded from ${file.name}</span>`;
+      document.getElementById('dzPrev').classList.add('loaded');
+    }
+    saveState();
+    renderDashboard();
+  };
+  reader.readAsText(file);
+}
+
+// ═══════════════════════════════════════════════════════
+//  CSV Parsing
+// ═══════════════════════════════════════════════════════
+function parseCSV(content) {
+  const r = Papa.parse(content, { header: true, skipEmptyLines: true, transformHeader: h => h.trim() });
+  return r.data.map(normalizeRow).filter(Boolean);
+}
+
+function normalizeRow(raw) {
+  const g = (...keys) => {
+    for (const k of keys) {
+      for (const variant of [k, k.toLowerCase(), k.toUpperCase()]) {
+        const v = raw[variant];
+        if (v !== undefined && v !== null) return String(v).trim();
+      }
+    }
+    return '';
+  };
+  const key = g('Issue key','Issue Key','key','Key','issuekey');
+  if (!key) return null;
+  return {
+    key,
+    status:   g('Status','status'),
+    severity: normSev(g('Custom field (Severity)','Severity','severity','customfield_10047')),
+    product:  g('Custom field (Product)','Product','product','customfield_11014'),
+    isBug:    g('Custom field (Software defect/bug?)','Software defect/bug?','Software Defect/Bug?','customfield_10070'),
+    impact:   g('Custom field (Impact Accounts)','Impact Accounts','Impact accounts','customfield_11015'),
+    customer: g('Custom field (Reporting Customer Affected)','Reporting Customer Affected','Reporting customer affected','customfield_11012'),
+    created:  parseJDate(g('Created','created')),
+    resolved: parseJDate(g('Resolved','resolved','Resolution date')),
+    dueDate:  parseJDate(g('Due date','Due Date','duedate')),
+    resolution: g('Resolution','resolution'),
+  };
+}
+
+function normSev(v) {
+  if (!v) return 'Unknown';
+  const m = v.match(/Level\s*([1-5])/i);
+  return m ? `Level ${m[1]}` : v;
+}
+
+function parseJDate(s) {
+  if (!s || !s.trim()) return null;
+  let d = new Date(s);
+  if (!isNaN(d.getTime())) return d;
+  const m1 = s.match(/^(\d{1,2})\/([A-Za-z]{3})\/(\d{2,4})/);
+  if (m1) {
+    const mo = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+    const yr = parseInt(m1[3]);
+    d = new Date(yr < 100 ? 2000+yr : yr, mo[m1[2].toLowerCase()], parseInt(m1[1]));
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const m2 = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m2) {
+    d = new Date(parseInt(m2[3]), parseInt(m2[1])-1, parseInt(m2[2]));
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
+function serializeRows(rows) {
+  return rows.map(r => ({
+    ...r,
+    created:  r.created  ? r.created.getTime()  : null,
+    resolved: r.resolved ? r.resolved.getTime() : null,
+    dueDate:  r.dueDate  ? r.dueDate.getTime()  : null,
+  }));
+}
+function deserializeRows(rows) {
+  if (!rows) return null;
+  return rows.map(r => ({
+    ...r,
+    created:  r.created  ? new Date(r.created)  : null,
+    resolved: r.resolved ? new Date(r.resolved) : null,
+    dueDate:  r.dueDate  ? new Date(r.dueDate)  : null,
+  }));
+}
+
+// ═══════════════════════════════════════════════════════
+//  Compute Metrics
+// ═══════════════════════════════════════════════════════
+function computeMetrics(rows) {
+  const m = {
+    total: rows.length, open: 0, resolved: 0,
+    slaOk: 0, slaBad: 0, slaNoDate: 0,
+    customerCount: 0,
+    customers: new Set(),
+    bySev: {}, byProduct: {}, byBug: {Yes:0,No:0,'Not sure':0},
+    byMonth: {}, byReporter: {},
+  };
+  SEVS.forEach(s => m.bySev[s] = { total:0, open:0, resolved:0, slaOk:0, slaBad:0, slaNoDate:0, totalDays:0 });
+
+  const isRes = r => r.resolution && r.resolution.toLowerCase() !== 'unresolved' && r.resolved;
+
+  rows.forEach(r => {
+    const sev = SEVS.includes(r.severity) ? r.severity : null;
+    const sb = sev ? m.bySev[sev] : null;
+    if (sev) sb.total++;
+
+    if (isRes(r)) {
+      m.resolved++;
+      if (sev) { sb.resolved++; if (r.created && r.resolved) sb.totalDays += (r.resolved - r.created) / 864e5; }
+      if (r.dueDate) {
+        if (r.resolved <= r.dueDate) { m.slaOk++; if (sev) sb.slaOk++; }
+        else { m.slaBad++; if (sev) sb.slaBad++; }
+      } else { m.slaNoDate++; if (sev) sb.slaNoDate++; }
+    } else {
+      m.open++;
+      if (sev) sb.open++;
+    }
+
+    if (r.impact && r.impact.toLowerCase() === 'yes') m.customerCount++;
+    const rep = r.reporter || 'Unknown';
+    if (!m.byReporter[rep]) m.byReporter[rep] = {total:0, open:0, resolved:0, bySev:{}};
+    m.byReporter[rep].total++;
+    if (isRes(r)) m.byReporter[rep].resolved++; else m.byReporter[rep].open++;
+    if (sev) m.byReporter[rep].bySev[sev] = (m.byReporter[rep].bySev[sev]||0) + 1;
+    if (r.customer) r.customer.split(',').forEach(c => { const t = c.trim(); if (t) m.customers.add(t); });
+
+    const prod = r.product || 'Unknown';
+    m.byProduct[prod] = (m.byProduct[prod] || 0) + 1;
+
+    const bk = ['Yes','No','Not sure'].includes(r.isBug) ? r.isBug : 'Not sure';
+    m.byBug[bk]++;
+
+    if (r.created) {
+      const mk = r.created.getFullYear() + '-' + String(r.created.getMonth()+1).padStart(2,'0');
+      m.byMonth[mk] = (m.byMonth[mk] || 0) + 1;
+    }
+  });
+
+  SEVS.forEach(s => {
+    const sb = m.bySev[s];
+    sb.avgDays = sb.resolved > 0 ? (sb.totalDays / sb.resolved).toFixed(1) : null;
+    const tot = sb.slaOk + sb.slaBad;
+    sb.slaPct = tot > 0 ? Math.round(sb.slaOk / tot * 100) : null;
+  });
+  const slaTot = m.slaOk + m.slaBad;
+  m.slaPct = slaTot > 0 ? Math.round(m.slaOk / slaTot * 100) : null;
+  return m;
+}
+
+// ═══════════════════════════════════════════════════════
+//  Render
+// ═══════════════════════════════════════════════════════
+function renderDashboard() {
+  const m = S.currentM, p = S.prevM;
+  renderCards(m, p);
+  renderFreqChart(m, p);
+  renderDonut(m);
+  renderFreqSection(m, p);
+  renderSLASection(m);
+  renderCustSection(m);
+  renderReporterSection(m);
+}
+
+// ── Cards ──
+function renderCards(m, p) {
+  el('cTotal').textContent = m.total;
+  el('cTotalSub').textContent = p ? `vs ${p.total} prior quarter` : `${SEVS.filter(s=>m.bySev[s].total>0).length} active severity levels`;
+  el('cOpen').textContent = m.open;
+  el('cOpenSub').textContent = `${m.resolved} resolved this quarter`;
+  if (m.slaPct !== null) {
+    const e = el('cSLA');
+    e.textContent = m.slaPct + '%';
+    e.style.color = m.slaPct >= 90 ? 'var(--green)' : m.slaPct >= 70 ? 'var(--yellow)' : 'var(--red)';
+    el('cSLASub').textContent = `${m.slaOk} of ${m.slaOk+m.slaBad} resolved on time`;
+  } else {
+    el('cSLA').textContent = 'N/A';
+    el('cSLASub').textContent = 'Set due dates on tickets for SLA tracking';
+  }
+  el('cCust').textContent = m.customerCount;
+  el('cCustSub').textContent = `${m.customers.size} unique customer${m.customers.size!==1?'s':''} named`;
+}
+
+// ── Frequency Chart ──
+function renderFreqChart(m, p) {
+  const ctx = el('freqChart').getContext('2d');
+  if (charts.freq) charts.freq.destroy();
+  const datasets = [{
+    label: S.quarter,
+    data: SEVS.map(s => m.bySev[s].total),
+    backgroundColor: SEVS.map(s => SEV_COLOR[s] + '99'),
+    borderColor: SEVS.map(s => SEV_COLOR[s]),
+    borderWidth: 1, borderRadius: 4,
+  }];
+  if (p) datasets.push({
+    label: 'Prior Quarter',
+    data: SEVS.map(s => p.bySev[s].total),
+    backgroundColor: 'rgba(139,148,158,.25)',
+    borderColor: 'rgba(139,148,158,.6)',
+    borderWidth: 1, borderRadius: 4,
+  });
+  charts.freq = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: SEVS.map(s => s.replace('Level ','')), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: '#8b949e', font:{size:11} } } },
+      scales: {
+        x: { ticks:{color:'#8b949e'}, grid:{color:'#21262d'} },
+        y: { beginAtZero:true, ticks:{color:'#8b949e',stepSize:1}, grid:{color:'#21262d'} }
+      }
+    }
+  });
+}
+
+// ── SLA Donut ──
+function renderDonut(m) {
+  const ctx = el('slaDonut').getContext('2d');
+  if (charts.donut) charts.donut.destroy();
+  charts.donut = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['On Time', 'SLA Breached', 'No Due Date', 'Open'],
+      datasets: [{
+        data: [m.slaOk, m.slaBad, m.slaNoDate, m.open],
+        backgroundColor: ['#3fb950','#f85149','#d29922','#58a6ff'],
+        borderColor: '#161b22', borderWidth: 2, hoverOffset: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position:'right', labels:{ color:'#8b949e', font:{size:11}, boxWidth:14 } },
+        tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed} (${Math.round(c.parsed/m.total*100)}%)` } }
+      }
+    }
+  });
+}
+
+// ── Frequency Section ──
+function renderFreqSection(m, p) {
+  const pb = p ? p.bySev : null;
+  const rows = SEVS.map(s => {
+    const cur = m.bySev[s].total, prev = pb ? pb[s].total : null;
+    const delta = prev !== null ? cur - prev : null;
+    const dStr = delta !== null
+      ? (delta > 0 ? `<span class="bad">+${delta}</span>` : delta < 0 ? `<span class="ok">${delta}</span>` : `<span style="color:var(--muted)">—</span>`)
+      : '—';
+    const sevChip = `<span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span>`;
+    const sevCell = window.KPI_DATA
+      ? `<a href="${buildJiraUrl(window.KPI_DATA.jqlCur + ' AND Severity = "' + s + '"')}" target="_blank" style="text-decoration:none">${sevChip}</a>`
+      : sevChip;
+    return `<tr><td>${sevCell}</td>
+      <td class="num">${cur}</td><td class="num">${prev??'—'}</td>
+      <td class="num">${dStr}</td><td class="num">${m.bySev[s].open}</td><td class="num">${m.bySev[s].resolved}</td></tr>`;
+  });
+  const td = p ? m.total - p.total : null;
+  rows.push(`<tr class="tr-total"><td><strong>Total</strong></td>
+    <td class="num">${m.total}</td><td class="num">${p?p.total:'—'}</td>
+    <td class="num">${td!==null?(td>0?`<span class="bad">+${td}</span>`:`<span class="ok">${td}</span>`):'—'}</td>
+    <td class="num">${m.open}</td><td class="num">${m.resolved}</td></tr>`);
+
+  const byProd = Object.entries(m.byProduct).sort((a,b)=>b[1]-a[1])
+    .map(([k,v]) => `<tr><td>${k||'—'}</td><td class="num">${v}</td></tr>`).join('');
+  const byBug = `<tr><td>Confirmed bug</td><td class="num">${m.byBug.Yes}</td></tr>
+    <tr><td>Not a bug</td><td class="num">${m.byBug.No}</td></tr>
+    <tr><td>Not sure</td><td class="num">${m.byBug['Not sure']}</td></tr>`;
+
+  el('freqSection').innerHTML = `
+    <table><thead><tr>
+      <th>Severity</th><th style="text-align:right">Current Q</th><th style="text-align:right">Prior Q</th>
+      <th style="text-align:right">QoQ Δ</th><th style="text-align:right">Open</th><th style="text-align:right">Resolved</th>
+    </tr></thead><tbody>${rows.join('')}</tbody></table>
+    <div class="two-col" style="margin-top:16px">
+      <div><div class="split-label">By Product</div>
+        <table><thead><tr><th>Product</th><th style="text-align:right">Count</th></tr></thead><tbody>${byProd}</tbody></table></div>
+      <div><div class="split-label">Software Defect / Bug?</div>
+        <table><thead><tr><th>Classification</th><th style="text-align:right">Count</th></tr></thead><tbody>${byBug}</tbody></table></div>
+    </div>`;
+}
+
+// ── SLA Section ──
+function renderSLASection(m) {
+  const rows = SEVS.map(s => {
+    const sb = m.bySev[s];
+    const tot = sb.slaOk + sb.slaBad;
+    const pct = sb.slaPct;
+    const pStr = pct !== null
+      ? `<span class="${pct>=90?'ok':pct>=70?'warn':'bad'}">${pct}%</span>` : '<span style="color:var(--muted)">N/A</span>';
+    return `<tr><td><span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span></td>
+      <td>${RES_SLA[s]}</td><td class="num">${sb.resolved}</td><td class="num">${sb.slaOk}</td>
+      <td class="num">${pStr}</td><td class="num">${sb.slaBad}</td>
+      <td class="num">${sb.avgDays !== null ? sb.avgDays+'d' : '—'}</td></tr>`;
+  });
+  const overallPct = m.slaPct !== null
+    ? `<span class="${m.slaPct>=90?'ok':m.slaPct>=70?'warn':'bad'}">${m.slaPct}%</span>` : '<span style="color:var(--muted)">N/A</span>';
+  rows.push(`<tr class="tr-total"><td><strong>Overall</strong></td><td>—</td>
+    <td class="num">${m.resolved}</td><td class="num">${m.slaOk}</td>
+    <td class="num">${overallPct}</td><td class="num">${m.slaBad}</td><td class="num">—</td></tr>`);
+
+  const warn = m.slaNoDate > 0
+    ? `<div class="warn-banner">⚠ ${m.slaNoDate} resolved issue${m.slaNoDate!==1?'s':''} had no due date and are excluded from SLA %. Set due dates per severity SLA to improve accuracy — or use a Jira Automation rule to auto-set them.</div>` : '';
+
+  el('slaSection').innerHTML = `
+    <table><thead><tr>
+      <th>Severity</th><th>Resolution SLA</th><th style="text-align:right">Resolved</th>
+      <th style="text-align:right">On Time</th><th style="text-align:right">SLA %</th>
+      <th style="text-align:right">Breaches</th><th style="text-align:right">Avg Days</th>
+    </tr></thead><tbody>${rows.join('')}</tbody></table>${warn}`;
+}
+
+// ── Reporter Section ──
+function renderReporterSection(m) {
+  const sorted = Object.entries(m.byReporter).sort((a,b) => b[1].total - a[1].total);
+  if (!sorted.length) { el('reporterSection').innerHTML = '<div class="empty"><div class="empty-icon">👤</div><p>No reporter data available</p></div>'; return; }
+  const sevCols = SEVS.filter(s => sorted.some(([,r]) => r.bySev[s]));
+  const rows = sorted.map(([name, r]) => {
+    const sevCells = sevCols.map(s => `<td class="num">${r.bySev[s]||'—'}</td>`).join('');
+    return `<tr><td style="font-size:13px">${escHtml(name)}</td>
+      <td class="num"><strong>${r.total}</strong></td>
+      <td class="num">${r.open}</td>
+      <td class="num">${r.resolved}</td>
+      ${sevCells}</tr>`;
+  });
+  const sevHeaders = sevCols.map(s => `<th style="text-align:right"><span class="${SEV_CHIP[s]}">${s.replace('Level ','L')}</span></th>`).join('');
+  el('reporterSection').innerHTML = `
+    <table><thead><tr>
+      <th>Reporter</th>
+      <th style="text-align:right">Total</th>
+      <th style="text-align:right">Open</th>
+      <th style="text-align:right">Resolved</th>
+      ${sevHeaders}
+    </tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+// ── Customer Section ──
+function renderCustSection(m) {
+  const custs = [...m.customers].sort();
+  el('custSection').innerHTML = `
+    <table><thead><tr><th>Metric</th><th style="text-align:right">Count</th></tr></thead>
+    <tbody>
+      <tr><td>Issues flagged as customer-impacting ("Impact Accounts = Yes")</td><td class="num">${m.customerCount}</td></tr>
+    </tbody></table>`;
+}
+
+// ── Response Time Table ──
+function renderResponseTable() {
+  const rd = S.responseData || {};
+  const rows = SEVS.map((s, i) => {
+    const k = `l${i+1}`;
+    const isMin = i < 3;
+    const avg = rd[`rt_${k}`] ? rd[`rt_${k}`] + (isMin ? ' min' : ' hrs') : '—';
+    const pct = rd[`rp_${k}`];
+    const pStr = pct !== undefined ? `<span class="${pct>=90?'ok':pct>=70?'warn':'bad'}">${pct}%</span>` : '—';
+    const status = pct !== undefined
+      ? (pct>=90?'<span class="ok">✓ On Track</span>':pct>=70?'<span class="warn">⚠ At Risk</span>':'<span class="bad">✗ Breached</span>') : '—';
+    return `<tr><td><span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span></td>
+      <td>${RT_SLA[s]}</td><td class="num">${avg}</td><td class="num">${pStr}</td><td class="num">${status}</td></tr>`;
+  });
+  el('responseBody').innerHTML = rows.join('');
+}
+
+// ── MTTD Table ──
+function renderMTTDTable() {
+  const md = S.mttdData || {};
+  const rows = SEVS.slice(0,4).map((s, i) => {
+    const k = `l${i+1}`;
+    const isMin = i < 3;
+    const cur = md[`md_${k}`], prev = md[`mp_${k}`];
+    const unit = isMin ? 'min' : 'hrs';
+    const trend = (cur && prev)
+      ? (parseFloat(cur)<parseFloat(prev)?'<span class="ok">↓ Improved</span>':parseFloat(cur)>parseFloat(prev)?'<span class="bad">↑ Worse</span>':'<span style="color:var(--muted)">→ Flat</span>') : '—';
+    return `<tr><td><span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span></td>
+      <td class="num">${cur?cur+' '+unit:'—'}</td><td class="num">${prev?prev+' '+unit:'—'}</td><td>${trend}</td></tr>`;
+  });
+  el('mttdBody').innerHTML = rows.join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  Manual Data Saves
+// ═══════════════════════════════════════════════════════
+function saveResponse() {
+  const rd = {};
+  ['l1','l2','l3','l4','l5'].forEach(k => {
+    const v1 = el(`rt_${k}`).value, v2 = el(`rp_${k}`).value;
+    if (v1) rd[`rt_${k}`] = parseFloat(v1);
+    if (v2) rd[`rp_${k}`] = parseFloat(v2);
+  });
+  S.responseData = rd;
+  saveState();
+  renderResponseTable();
+  showConfirm('rtConfirm');
+}
+
+function saveMTTD() {
+  const md = {};
+  ['l1','l2','l3','l4'].forEach(k => {
+    const v1 = el(`md_${k}`).value, v2 = el(`mp_${k}`).value;
+    if (v1) md[`md_${k}`] = parseFloat(v1);
+    if (v2) md[`mp_${k}`] = parseFloat(v2);
+  });
+  S.mttdData = md;
+  saveState();
+  renderMTTDTable();
+  showConfirm('mttdConfirm');
+}
+
+function saveNotables() {
+  const ni = [];
+  for (let i = 0; i < 3; i++) {
+    ni.push({
+      key: el(`ni_key_${i}`).value,
+      sev: el(`ni_sev_${i}`).value,
+      sum: el(`ni_sum_${i}`).value,
+      res: el(`ni_res_${i}`).value,
+      sla: el(`ni_sla_${i}`).value,
+    });
+  }
+  S.notables = ni;
+  S.assessment = el('assessmentText').value;
+  saveState();
+  showConfirm('notableConfirm');
+}
+
+function saveUptime() {
+  S.uptimeHours = el('ut_hours').value;
+  S.uptimeDown = el('ut_down').value;
+  saveState();
+  showConfirm('uptimeConfirm');
+}
+
+function calcUptime() {
+  const h = parseFloat(el('ut_hours').value) || 0;
+  const d = parseFloat(el('ut_down').value) || 0;
+  if (h > 0) {
+    const pct = ((h - d) / h * 100).toFixed(3);
+    const met = parseFloat(pct) >= 99.5;
+    el('ut_pct').value = pct + '%';
+    el('ut_pct').style.color = met ? 'var(--green)' : 'var(--red)';
+    el('ut_met').value = met ? '✓ Yes — SLA Met' : '✗ No — SLA Missed';
+    el('ut_met').style.color = met ? 'var(--green)' : 'var(--red)';
+  }
+}
+
+function loadManualInputs() {
+  const rd = S.responseData || {}, md = S.mttdData || {};
+  ['l1','l2','l3','l4','l5'].forEach(k => {
+    if (rd[`rt_${k}`] !== undefined) el(`rt_${k}`).value = rd[`rt_${k}`];
+    if (rd[`rp_${k}`] !== undefined) el(`rp_${k}`).value = rd[`rp_${k}`];
+  });
+  ['l1','l2','l3','l4'].forEach(k => {
+    if (md[`md_${k}`] !== undefined) el(`md_${k}`).value = md[`md_${k}`];
+    if (md[`mp_${k}`] !== undefined) el(`mp_${k}`).value = md[`mp_${k}`];
+  });
+  if (S.assessment && el('assessmentText')) el('assessmentText').value = S.assessment;
+  if (S.notables) {
+    S.notables.forEach((n, i) => {
+      if (el(`ni_key_${i}`)) el(`ni_key_${i}`).value = n.key || '';
+      if (el(`ni_sev_${i}`)) el(`ni_sev_${i}`).value = n.sev || '—';
+      if (el(`ni_sum_${i}`)) el(`ni_sum_${i}`).value = n.sum || '';
+      if (el(`ni_res_${i}`)) el(`ni_res_${i}`).value = n.res || '';
+      if (el(`ni_sla_${i}`)) el(`ni_sla_${i}`).value = n.sla || '—';
+    });
+  }
+  if (S.uptimeHours) el('ut_hours').value = S.uptimeHours;
+  if (S.uptimeDown) el('ut_down').value = S.uptimeDown;
+}
+
+// ═══════════════════════════════════════════════════════
+//  State Persistence
+// ═══════════════════════════════════════════════════════
+function saveState() {
+  try {
+    const toStore = { ...S };
+    // Recompute metrics from serialized rows on load — no need to store separately
+    // But keep serialized rows for re-render
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
+  } catch(e) { console.warn('localStorage write failed:', e); }
+}
+
+function loadState() {
+  if (window.KPI_DATA) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    Object.assign(S, saved);
+    // Rehydrate metrics from stored rows
+    if (S.currentRows) S.currentM = computeMetrics(deserializeRows(S.currentRows));
+    if (S.prevRows) S.prevM = computeMetrics(deserializeRows(S.prevRows));
+  } catch(e) { console.warn('localStorage read failed:', e); }
+}
+
+function clearData() {
+  if (!confirm('Clear all imported CSV data? Manual entries (response time, MTTD, notes) will be kept.')) return;
+  S.currentRows = null; S.prevRows = null; S.currentM = null; S.prevM = null; S.lastUpdated = null;
+  saveState();
+  location.reload();
+}
+
+// ═══════════════════════════════════════════════════════
+//  UI Helpers
+// ═══════════════════════════════════════════════════════
+function el(id) { return document.getElementById(id); }
+
+function showConfirm(id) {
+  const e = el(id);
+  e.style.display = 'inline';
+  setTimeout(() => e.style.display = 'none', 2000);
+}
+
+function toggleImport(force) {
+  importOpen = force !== undefined ? force : !importOpen;
+  el('importBody').style.display = importOpen ? 'grid' : 'none';
+  el('importArrow').textContent = importOpen ? '▾' : '▸';
+}
+
+function copyCmd() {
+  const cmd = 'cd ~/Library/CloudStorage/OneDrive-Basis/Documents/nick-dev && python3 fetch-prod-kpi.py';
+  navigator.clipboard.writeText(cmd).then(() => {
+    const lbl = el('copyLabel');
+    lbl.textContent = '✓ Copied';
+    setTimeout(() => lbl.textContent = 'Copy', 2000);
+  });
+}
+
+function buildJiraUrl(jql) {
+  return window.KPI_DATA.jiraUrl + '/issues/?jql=' + encodeURIComponent(jql);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderNotablesFromData() {
+  const notables = S.notables || [];
+  const slaClass = s => s === 'Yes' ? 'ok' : s === 'No' ? 'bad' : '';
+  const rows = notables.map(n => {
+    const chip = SEV_CHIP[n.sev] || '';
+    const sevHtml = chip ? `<span class="${chip}">${escHtml(n.sev)}</span>` : escHtml(n.sev || '—');
+    return `<tr>
+      <td><a href="https://basis.atlassian.net/browse/${escHtml(n.key)}" target="_blank" style="color:var(--accent);font-family:monospace;font-size:12px;text-decoration:none">${escHtml(n.key)}</a></td>
+      <td>${sevHtml}</td>
+      <td style="font-size:12px">${escHtml(n.sum || '—')}</td>
+      <td style="font-size:12px">${escHtml(n.res || '—')}</td>
+      <td><span class="${slaClass(n.sla)}">${escHtml(n.sla || '—')}</span></td>
+    </tr>`;
+  });
+  if (rows.length === 0) {
+    rows.push('<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No notable incidents this quarter</td></tr>');
+  }
+  el('notableRows').innerHTML = rows.join('');
+  if (S.assessment && el('assessmentText')) el('assessmentText').value = S.assessment;
+}
+</script>
+</body>
+</html>
