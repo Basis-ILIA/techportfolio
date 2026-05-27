@@ -4,91 +4,119 @@
 
    ↓ EDIT THIS FILE TO ADD / REMOVE / REORDER MENU ITEMS ↓
 
-   Each item in NAV_ITEMS becomes a link in the top navigation.
+   The NAV_ITEMS array drives the sidebar nav on every page.
 
-   Fields:
-     label   — Text shown in the nav (required)
-     href    — URL or relative path (required)
-     id      — Unique identifier for "active" highlighting (required)
-     section — Optional grouping label, shown on the home page
-               (e.g. "Roadmap", "Programs", "Resources")
-     desc    — Optional one-line description for the home-page card
-     status  — Optional pill shown on the home card:
-               "active" | "planning" | "draft" | "external" | "soon"
-     external — true to open in a new tab (e.g. external URLs)
+   ── ITEM FIELDS ───────────────────────────────────────────────
+     id        Unique identifier. Used for active highlighting.
+     label     Text shown in the nav (required).
+     href      URL or relative file path (required, unless `children`).
+     external  true → opens in new tab + shows external icon.
+     children  Array of child items (creates a collapsible parent).
+     section   Sidebar section label this item belongs under.
+               Items with the same `section` are grouped together.
+     hideFromSidebar  true → do not show in sidebar (rare).
 
-   To add a new item: copy any block, change the fields, save.
-   To remove: delete the block. To reorder: drag it up/down.
-   No build step. Refresh the page.
+   ── SECTIONS ──────────────────────────────────────────────────
+     Sections are derived from the `section` field on items.
+     Just set the same string on multiple items and they'll be
+     grouped under a single header. Order = first appearance.
+
+   ── TO ADD A NEW PAGE ─────────────────────────────────────────
+     1. Copy any block in NAV_ITEMS.
+     2. Edit fields. Save. Refresh browser. Done — no build step.
+
+   ── TO ADD A SUB-MENU ─────────────────────────────────────────
+     Add a `children: [...]` array (see Mediaocean below).
+     The parent expands/collapses; children are full nav items.
    ═══════════════════════════════════════════════════════════════ */
 
 const NAV_ITEMS = [
 
+  // ─── Home ────────────────────────────────────────────────────
   {
     id: 'home',
     label: 'Home',
     href: 'index.html',
-    section: null,           // Home is excluded from the directory listing
-    showInNav: true,
+    section: null,   // null = appears at the top, above sections
   },
 
+  // ─── Roadmap ─────────────────────────────────────────────────
   {
     id: 'roadmap',
     label: 'Technology Roadmap',
     href: 'https://orange-coast-06b045110.4.azurestaticapps.net/2026-summer-roadmap.html',
     external: true,
     section: 'Roadmap',
-    desc: 'Summer 2026 roadmap — streams, pillars, objectives, key results, and project delivery.',
     status: 'active',
   },
 
+  // ─── Programs ────────────────────────────────────────────────
   {
     id: 'mediaocean',
     label: 'Mediaocean',
-    href: 'prisma-integration-status.html',
-    section: 'Program Status',
-    desc: 'Automated two-way ERP integration between Basis and Prisma (Mediaocean). Pilot and PSD phase.',
+    href: 'mediaocean-overview.html',
+    section: 'Programs',
     status: 'active',
+    children: [
+      {
+        id: 'prisma',
+        label: 'Prisma Integration',
+        href: 'prisma-integration-status.html',
+        status: 'active',
+      },
+      {
+        id: 'innovid',
+        label: 'Innovid Ad Server',
+        href: 'innovid-integration-status.html',
+        status: 'active',
+      },
+      {
+        id: 'sam',
+        label: 'SAM (Social Ads Mgr)',
+        href: 'sam-status.html',
+        status: 'active',
+      },
+    ],
   },
-  
-    {
+
+  // ─── Dashboards ──────────────────────────────────────────────
+  {
     id: 'prod-kpi',
     label: 'Production KPI Dashboard',
     href: 'prod-kpi-dashboard.html',
-    section: 'Production KPI Dashboard',
-    desc: 'Dashboard for Prod support & incident KPIs',
+    section: 'Dashboards',
     status: 'active',
   },
 
-  // ─── Add new program status pages below this line ───
+  // ─── Add new pages below this line ───────────────────────────
   //
-  // Example template:
+  // Example: a new program with sub-workstreams
   // {
   //   id: 'sam',
-  //   label: 'SAM',
-  //   href: 'sam-status.html',
-  //   section: 'Program Status',
-  //   desc: 'Short description here.',
+  //   label: 'New Program',
+  //   href: 'new-program-overview.html',
+  //   section: 'Programs',
   //   status: 'planning',
+  //   children: [
+  //     { id: 'sub1', label: 'Workstream 1', href: 'sub1.html', status: 'planning' },
+  //     { id: 'sub2', label: 'Workstream 2', href: 'sub2.html', status: 'draft' },
+  //   ],
   // },
-
-  // ─── Add other resource/reference links below this line ───
   //
-  // Example:
+  // Example: an external resource link
   // {
   //   id: 'architecture',
   //   label: 'Architecture Docs',
   //   href: 'https://example.com/...',
   //   external: true,
   //   section: 'Resources',
-  //   desc: 'System architecture documentation.',
   //   status: 'external',
   // },
 
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO METADATA — shown on the home page splash
+   PORTFOLIO METADATA — shown on the home page splash + footer
    ═══════════════════════════════════════════════════════════════ */
 const PORTFOLIO_META = {
   eyebrow: 'Basis Technology',
@@ -96,4 +124,17 @@ const PORTFOLIO_META = {
   lede: 'Roadmap, program statuses, and other reference materials for the Basis Technology sector.',
   lastUpdated: 'May 27, 2026',
   owner: '© 2026 Basis Global Technologies, LLC',
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   STATUS PILL DEFINITIONS
+   Used for sidebar dots and home page status counts.
+   You can add custom statuses here.
+   ═══════════════════════════════════════════════════════════════ */
+const STATUS_DEFS = {
+  active:   { label: 'Active',   className: 'green' },
+  planning: { label: 'Planning', className: 'blue'  },
+  draft:    { label: 'Draft',    className: 'gray'  },
+  external: { label: 'External', className: 'gray'  },
+  soon:     { label: 'Soon',     className: 'amber' },
 };
