@@ -271,40 +271,12 @@
 
     const meta = (typeof PORTFOLIO_META !== 'undefined') ? PORTFOLIO_META : {};
 
-    // Count items by status
-    const counts = {};
-    function walk(items) {
-      items.forEach(item => {
-        if (item.id === 'home') return;
-        if (item.status) counts[item.status] = (counts[item.status] || 0) + 1;
-        if (item.children) walk(item.children);
-      });
-    }
-    walk(NAV_ITEMS);
-
-    const defs = (typeof STATUS_DEFS !== 'undefined') ? STATUS_DEFS : {};
-    const summaryCells = Object.keys(counts).map(s => {
-      const d = defs[s] || { label: s, className: 'gray' };
-      return `
-        <div class="summary-cell">
-          <div class="summary-count ${d.className}">${counts[s]}</div>
-          <div class="summary-label">${escapeHtml(d.label)}</div>
-        </div>
-      `;
-    }).join('');
-
     root.innerHTML = `
       <div class="splash">
         ${meta.eyebrow ? `<div class="splash-eyebrow">${escapeHtml(meta.eyebrow)}</div>` : ''}
         <h1 class="splash-title">${escapeHtml(meta.title || 'Tech Portfolio')}</h1>
         ${meta.lede ? `<p class="splash-lede">${escapeHtml(meta.lede)}</p>` : ''}
       </div>
-      ${summaryCells ? `
-        <div class="status-summary">
-          <div class="status-summary-inner">${summaryCells}</div>
-        </div>
-      ` : ''}
-      <div class="home-hint">Use the sidebar to navigate.</div>
     `;
   }
 

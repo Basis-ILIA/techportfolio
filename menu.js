@@ -47,7 +47,7 @@ const NAV_ITEMS = [
       {
         id: 'prisma',
         label: 'Prisma Integration',
-        href: 'prisma_integration_status.html',
+        href: 'prisma-integration-status.html',
         status: 'active',
       },
       {
