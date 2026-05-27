@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prisma × Basis — Integration Status</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
+    color: #111;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* ── TOP NAV ── */
+  .topnav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    border-bottom: 1px solid #e5e7eb;
+    height: 48px;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 16px;
+  }
+  .topnav-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .site-back {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b7280;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    white-space: nowrap;
+    transition: color 0.1s, background 0.1s;
+  }
+  .site-back:hover { color: #111; background: #f3f4f6; }
+  .topnav-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    white-space: nowrap;
+  }
+  .topnav-tabs {
+    display: flex;
+    gap: 0;
+    height: 100%;
+  }
+  .topnav-tabs button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    padding: 0 16px;
+    color: #6b7280;
+    height: 100%;
+    white-space: nowrap;
+    transition: color 0.12s;
+  }
+  .topnav-tabs button:hover { color: #111; }
+  .topnav-tabs button.active {
+    color: #111;
+    border-bottom-color: #2563eb;
+  }
+  .topnav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #6b7280;
+    white-space: nowrap;
+  }
+  .sync-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #f59e0b;
+    display: inline-block;
+  }
+  .sync-dot.green { background: #10b981; }
+
+  /* ── SUBBAR ── */
+  .subbar {
+    padding: 8px 32px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 12.5px;
+    color: #374151;
+    background: #fff;
+  }
+  .subbar span strong { font-weight: 600; color: #111; }
+  .subbar-right { margin-left: auto; color: #9ca3af; font-size: 12px; }
+
+  /* ── PAGE ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 36px 32px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── TYPOGRAPHY ── */
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 28px;
+  }
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 4px;
+    margin-top: 32px;
+  }
+  h2:first-child { margin-top: 0; }
+  .section-sub {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 16px;
+  }
+  p { font-size: 13.5px; color: #374151; line-height: 1.6; margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── KPI ROW ── */
+  .kpi-row {
+    display: flex;
+    gap: 1px;
+    background: #e5e7eb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .kpi-cell {
+    flex: 1;
+    background: #fff;
+    padding: 16px 20px;
+  }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+  .kpi-sub { font-size: 12px; color: #6b7280; }
+  .kpi-value.amber { color: #d97706; }
+  .kpi-value.green { color: #059669; }
+  .kpi-value.red { color: #dc2626; }
+
+  /* ── CARDS ── */
+  .card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    background: #fff;
+  }
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 6px;
+  }
+  .card p { margin-bottom: 0; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .callout-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .callout.red { background: #fef2f2; border: 1px solid #fecaca; }
+  .callout.red .callout-label { color: #dc2626; }
+  .callout.amber { background: #fffbeb; border: 1px solid #fde68a; }
+  .callout.amber .callout-label { color: #d97706; }
+  .callout.green { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .callout.green .callout-label { color: #059669; }
+  .callout.blue { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .callout.blue .callout-label { color: #2563eb; }
+  .callout.gray { background: #f9fafb; border: 1px solid #e5e7eb; }
+  .callout.gray .callout-label { color: #6b7280; }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+  }
+  .badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .badge.green { background: #f0fdf4; color: #059669; border-color: #bbf7d0; }
+  .badge.amber { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+  .badge.red { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+  .badge.blue { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+  .badge.gray { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+
+  /* ── DIVIDER ── */
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 28px 0; }
+
+  /* ── SECTION HEADING ── */
+  .section-heading {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    margin-bottom: 12px;
+    margin-top: 28px;
+  }
+  .section-heading:first-child { margin-top: 0; }
+
+  /* ── PILOT TABLE ── */
+  .pilot-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .pilot-table thead tr { border-bottom: 1px solid #e5e7eb; }
+  .pilot-table th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    padding: 6px 12px 8px;
+    text-align: left;
+    background: #f9fafb;
+  }
+  .pilot-table th:first-child { border-radius: 6px 0 0 0; }
+  .pilot-table th:last-child { border-radius: 0 6px 0 0; }
+  .pilot-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+    color: #374151;
+    line-height: 1.5;
+  }
+  .pilot-table tr:last-child td { border-bottom: none; }
+  .pilot-table tr:hover td { background: #f9fafb; }
+  .pilot-table .agency { font-weight: 500; color: #111; }
+  .top-candidate { background: #fefce8; }
+  .top-candidate:hover td { background: #fef9c3 !important; }
+
+  /* ── GENERAL TABLE ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .data-table th {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    padding: 8px 14px;
+    text-align: left;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .data-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: top;
+    color: #374151;
+    line-height: 1.55;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #f9fafb; }
+  .owner-cell { font-weight: 500; color: #111; white-space: nowrap; }
+  .date-cell { font-size: 12px; color: #6b7280; white-space: nowrap; }
+
+  /* ── TIMELINE ── */
+  .timeline { padding-left: 20px; position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: #e5e7eb;
+  }
+  .tl-item {
+    position: relative;
+    padding: 0 0 20px 20px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -7px; top: 5px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    border: 2px solid #e5e7eb;
+  }
+  .tl-item.done::before { background: #10b981; border-color: #10b981; }
+  .tl-item.active::before { background: #2563eb; border-color: #2563eb; box-shadow: 0 0 0 3px #dbeafe; }
+  .tl-item.upcoming::before { background: #fff; border-color: #9ca3af; }
+  .tl-item.risk::before { background: #dc2626; border-color: #dc2626; }
+  .tl-date { font-size: 11.5px; font-weight: 500; color: #6b7280; margin-bottom: 1px; }
+  .tl-title { font-size: 13.5px; font-weight: 500; color: #111; margin-bottom: 2px; }
+  .tl-desc { font-size: 12.5px; color: #6b7280; line-height: 1.5; }
+
+  /* ── PROJECT LIST ── */
+  .project-item {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+  .proj-num {
+    font-size: 18px;
+    font-weight: 600;
+    color: #d1d5db;
+    line-height: 1;
+    padding-top: 1px;
+  }
+  .proj-name { font-size: 13.5px; font-weight: 600; color: #111; margin-bottom: 4px; }
+  .proj-desc { font-size: 12.5px; color: #6b7280; line-height: 1.55; }
+  .proj-meta { text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; min-width: 120px; }
+
+  /* ── WK GRID ── */
+  .wk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .wk-col { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 18px; }
+  .wk-col-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #9ca3af; margin-bottom: 10px; }
+  .wk-col ul { padding-left: 16px; }
+  .wk-col li { font-size: 13px; color: #374151; line-height: 1.6; margin-bottom: 4px; }
+
+  /* ── DECISION LOG ── */
+  .decision-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #f3f4f6;
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 16px;
+    align-items: start;
+  }
+  .decision-item:last-child { border-bottom: none; }
+  .decision-date { font-size: 12px; color: #9ca3af; padding-top: 1px; }
+  .decision-text { font-size: 13px; color: #374151; line-height: 1.55; }
+  .decision-text strong { color: #111; font-weight: 600; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 720px) {
+    .page { padding: 24px 16px 60px; }
+    .topnav { padding: 0 16px; }
+    .subbar { padding: 8px 16px; flex-wrap: wrap; gap: 12px; }
+    .kpi-row { flex-direction: column; gap: 0; }
+    .wk-grid { grid-template-columns: 1fr; }
+    .decision-item { grid-template-columns: 1fr; gap: 4px; }
+    .project-item { grid-template-columns: 28px 1fr; }
+    .proj-meta { grid-column: 2; flex-direction: row; align-items: center; justify-content: flex-start; }
+    .pilot-table { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <a href="index.html" class="site-back">← Portfolio</a>
+    <span class="nav-sep" style="color:#e5e7eb;font-size:18px;font-weight:300">|</span>
+    <a href="tech_roadmap.html" class="site-back">Roadmap</a>
+    <span class="nav-sep" style="color:#e5e7eb;font-size:18px;font-weight:300">|</span>
+    <span class="topnav-title">Prisma × Basis Integration</span>
+  </div>
+  <div class="topnav-tabs">
+    <button class="active" data-tab="overview">Overview</button>
+    <button data-tab="pilot">Pilot Customer</button>
+    <button data-tab="timeline">Timeline</button>
+    <button data-tab="projects">Projects</button>
+    <button data-tab="decisions">Decisions</button>
+    <button data-tab="actions">Actions</button>
+  </div>
+  <div class="topnav-right">
+    <span class="sync-dot amber"></span>
+    Updated May 26, 2026
+  </div>
+</nav>
+
+<!-- SUBBAR -->
+<div class="subbar">
+  <span><strong>3</strong> Blockers</span>
+  <span><strong>12</strong> Prospects in outreach</span>
+  <span><strong>6</strong> Work buckets</span>
+  <span><strong>Q1 2027</strong> GA target</span>
+  <div class="subbar-right">Week of 05/26/2026 &nbsp;·&nbsp; Author: Aubrey Lehrmann &nbsp;·&nbsp; Program Lead: Ilia Fonariov</div>
+</div>
+
+<div class="page">
+
+  <!-- ════════ OVERVIEW ════════ -->
+  <div class="tab-panel active" id="tab-overview">
+
+    <h1>Integration Status</h1>
+    <p class="page-sub">Automated two-way ERP integration between Basis and Prisma (Mediaocean). Week of May 26, 2026.</p>
+
+    <div class="kpi-row">
+      <div class="kpi-cell">
+        <div class="kpi-label">Overall Status</div>
+        <div class="kpi-value" style="font-size:16px;padding-top:3px"><span class="badge green">On Track</span></div>
+        <div class="kpi-sub" style="margin-top:6px">Positive pilot signals; API docs in review</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">GA Target</div>
+        <div class="kpi-value">Q1 2027</div>
+        <div class="kpi-sub">Earliest realistic; pilot required</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Eng. Start</div>
+        <div class="kpi-value">Jun / Jul</div>
+        <div class="kpi-sub">Pending June 3 auth/API release</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Pilot Prospects</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-sub">Active outreach; 5 top candidates</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Pilot Backstop</div>
+        <div class="kpi-value amber">Sep 1</div>
+        <div class="kpi-sub">If no signed pilot, timeline re-baselines</div>
+      </div>
+    </div>
+
+    <div class="section-heading">Goal</div>
+    <div class="card">
+      <div class="card-title">Automated Two-Way ERP Integration</div>
+      <p>Provide a reliable, automated two-way ERP integration between Basis and Prisma that programmatically synchronizes campaign planning, IO management, placement-level delivery data, and billing. Replaces manual entry, spreadsheets, and disconnected billing workflows.</p>
+      <p style="margin-top:8px">Unlocks HoldCo agency relationships — OMD, GroupeConnect, Zimmerman — with billions in GDMS. Eliminates manual reconciliation required for Prisma-originated campaigns in billing and finance workflows. Baseline to be established at pilot onboarding; target improvement metrics TBD post-pilot.</p>
+    </div>
+
+    <div class="section-heading">Blockers</div>
+
+    <div class="callout red">
+      <div class="callout-label">Blocker 1 — Auth / Connection API</div>
+      Prisma auth/connection API expected as part of <strong>April 30 and June 3 releases</strong>. Note: the April 30 release documentation was received the week of May 19 and is currently under review by Basis engineering. Feedback and questions to be provided to Prisma by the next Wednesday weekly call. June 3 release remains on track. This blocker does not block PSD completion or PoC planning, but gates end-to-end engineering and testing.
+    </div>
+
+    <div class="callout red">
+      <div class="callout-label">Blocker 2 — No Pilot Customer Confirmed</div>
+      Prisma will not issue a production API key or proceed to GA without a pilot customer. Active outreach is underway across 12 prospects. Positive early signals received from several. Multiple pilots are acceptable if interest is sufficient — Basis and Prisma have agreed to this. September 1, 2026 is the backstop: if no signed pilot by then, the Q1 2027 launch timeline is at risk and will be re-baselined. Owner: Aubrey Lehrmann + Mike Olson.
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-label">Blocker 3 — Basis Product Sign-off on Email Matching</div>
+      Short-term email-matching approach was accepted by Prisma on April 8, 2026. Internal Basis product sign-off is still pending. The approach creates tension with Basis's multi-agency architecture; a medium-term path to OpenID Connect has been agreed.
+    </div>
+
+    <hr>
+
+    <div class="section-heading">Certification</div>
+    <div class="callout green">
+      <div class="callout-label">Prisma Test Cases Received</div>
+      Prisma certification test cases have been received and are under review by Basis. Basis to determine any additional test cases required on their side and provide feedback within two weeks.
+    </div>
+
+    <hr>
+
+    <div class="section-heading">Current Phase</div>
+    <div class="card">
+      <div class="card-title">Solution Definition + PoC Planning &nbsp; <span class="badge blue">PSD: In Stakeholder Review</span> &nbsp; <span class="badge amber">Build: Not Yet Authorized</span></div>
+      <p>The working group met in person in Chicago (week of May 5) and made strong progress toward finalizing the solution across multiple use cases. The PSD is being updated and will be sent for leadership review and sign-off by May 31. Work has been broken into six buckets with moderate sequential dependencies: Authorization and Configuration, Master Data Linking, Campaign Shell Management, Media Plan Line Item Management, Delivery Data, and Notifications / Vendor IO and Campaign Approval Sync.</p>
+      <p style="margin-top:8px">Build authorization is gated on PSD sign-off AND receipt of Mediaocean's June 3 deliverable with full docs/access. Clickable PoC prototype due July 1 (Kate Adams), using the OMD workflow as reference. Formal go/no-go review before development begins: July 2026.</p>
+    </div>
+
+  </div>
+
+  <!-- ════════ PILOT CUSTOMER ════════ -->
+  <div class="tab-panel" id="tab-pilot">
+
+    <h1>Pilot Customer</h1>
+    <p class="page-sub">Mediaocean requires a pilot customer before issuing a production API key. Active outreach underway.</p>
+
+    <div class="callout blue">
+      <div class="callout-label">Outreach Status</div>
+      Outreach is progressing with several positive early signals across the prospect list. Prisma is conducting parallel outreach to the same prospect list through their own contacts. Basis and Prisma have agreed that more than one pilot customer is acceptable — multiple pilots are welcome if interest is sufficient. Direction to proceed with broader outreach beyond Moroch to be confirmed and communicated to Prisma.
+    </div>
+
+    <div class="section-heading">Prospect List — Top 5 Current Candidates highlighted</div>
+
+    <table class="pilot-table">
+      <thead>
+        <tr>
+          <th style="width:180px">Agency</th>
+          <th>Status / Notes</th>
+          <th style="width:130px">Standing</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="top-candidate">
+          <td class="agency">Go Fish (fka Agital)</td>
+          <td>On top-5 candidate list; outreach in progress via Sales VP on account.</td>
+          <td><span class="badge amber">Top 5</span></td>
+        </tr>
+        <tr class="top-candidate">
+          <td class="agency">Hearts and Science</td>
+          <td>Inbound interest generated organically through a sales conversation — was not on the original outreach list. Strong signal.</td>
+          <td><span class="badge amber">Top 5</span></td>
+        </tr>
+        <tr class="top-candidate">
+          <td class="agency">OMD</td>
+          <td>Meeting held with Mark; positive reception, direct interest expressed. Needs to run up the chain. January–March quarter identified as likely timing given planning cycle constraints. Broadcast calendar capability flagged as a potential requirement.</td>
+          <td><span class="badge amber">Top 5</span></td>
+        </tr>
+        <tr class="top-candidate">
+          <td class="agency">Moroch</td>
+          <td>Interested but needs to align internally. Go/no-go deadline set for this Thursday.</td>
+          <td><span class="badge amber">Top 5</span></td>
+        </tr>
+        <tr class="top-candidate">
+          <td class="agency">PHD</td>
+          <td>Head of agentic advertising and programmatic investment agreed to participate in a Cannes panel with Mike Olson. Pilot conversation to be had there.</td>
+          <td><span class="badge amber">Top 5</span></td>
+        </tr>
+        <tr>
+          <td class="agency">Active International</td>
+          <td>Contact out until early June; engagement to continue after their return.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+        <tr>
+          <td class="agency">Anchor Trading</td>
+          <td>Asking engaged questions; response pending.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+        <tr>
+          <td class="agency">Monks</td>
+          <td>Interested but needs to align internally.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+        <tr>
+          <td class="agency">Horizon</td>
+          <td>Update expected May 28.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+        <tr>
+          <td class="agency">Giant Spoon</td>
+          <td>On prospect list; outreach in progress via Sales VP.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+        <tr>
+          <td class="agency">GroupeConnect</td>
+          <td>On prospect list; outreach in progress via Sales VP.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+        <tr>
+          <td class="agency">Zimmerman</td>
+          <td>Outreach to Bob Bernstein being pursued via Shawn; Aubrey following up with Cindy if no response.</td>
+          <td><span class="badge gray">In Outreach</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <div class="section-heading">Pilot Customer Criteria</div>
+    <div class="callout gray">
+      <div class="callout-label">Qualification Requirements</div>
+      Self-serve agency currently using Prisma for Agencies, willing to run at least one campaign for a full billing cycle through both Basis and Prisma with the integrated workflow. Two different line items with two different media types preferred but not required. Long-term client status preferred but not required — a friendly one-off engagement is acceptable.
+    </div>
+
+    <div class="section-heading">Key Deadlines</div>
+    <div class="callout amber">
+      <div class="callout-label">September 1, 2026 — Pilot Backstop</div>
+      If no signed pilot customer by September 1, 2026, the Q1 2027 GA timeline is at risk and will be re-baselined. Owner: Aubrey Lehrmann.
+    </div>
+    <div class="callout blue">
+      <div class="callout-label">July 1, 2026 — Clickable Prototype Due</div>
+      Kate Adams to deliver a sales-enabling clickable prototype using the OMD workflow as reference model. Success criteria to be defined with Mike Olson. Intended to generate agency interest and support pilot conversion.
+    </div>
+    <div class="callout blue">
+      <div class="callout-label">July 2026 — Formal Go/No-Go Review</div>
+      Formal review before development begins. Gated on pilot customer confirmation and PSD sign-off.
+    </div>
+
+    <hr>
+
+    <div class="section-heading">Measurement</div>
+    <div class="card">
+      <div class="card-title">Pilot Baseline Capture</div>
+      <p>At pilot onboarding, the customer's current process baseline will be captured — time, effort, and accuracy gaps — to compare against post-launch performance. Target improvement metrics to be defined post-pilot. Reconciliation burden measurement baseline to be established at onboarding.</p>
+    </div>
+
+  </div>
+
+  <!-- ════════ TIMELINE ════════ -->
+  <div class="tab-panel" id="tab-timeline">
+
+    <h1>Timeline</h1>
+    <p class="page-sub">Key milestones and dates. Q1 2027 GA target; gated on pilot customer and June 3 auth API release.</p>
+
+    <div class="timeline">
+      <div class="tl-item done">
+        <div class="tl-date">April 8, 2026</div>
+        <div class="tl-title">Email-matching approach accepted by Prisma</div>
+        <div class="tl-desc">Short-term path agreed. Basis internal sign-off still pending.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">April 2026</div>
+        <div class="tl-title">PoC-first strategy pivot confirmed</div>
+        <div class="tl-desc">Pivoted after failure to identify viable pilot among overlapping agency accounts. OMD workflow adopted as PoC reference model.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">April 20, 2026</div>
+        <div class="tl-title">Five-project breakdown published; timeline baseline set</div>
+        <div class="tl-desc">Auth, Campaign, Delivery, Placement Integration, Notifications. Hiten framed Q4 2026 PoC / Early Q1 2027 go-live as working baseline (not committed).</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">May 5–9, 2026</div>
+        <div class="tl-title">Chicago onsite — major scope clarification</div>
+        <div class="tl-desc">Working group met in person. Strong progress finalizing solution across multiple use cases. Work scope updated to 6 buckets.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">May 7, 2026</div>
+        <div class="tl-title">Executive Decision Worksheet completed</div>
+        <div class="tl-desc">Decisions captured: Continue (spec only); pilot pursuit active; 9/1 backstop confirmed. Operating rule: "If it would be expensive to redo after a pilot, we do not build it before a pilot."</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">Week of May 19, 2026</div>
+        <div class="tl-title">April 30 Prisma release documentation received</div>
+        <div class="tl-desc">Under review by Basis engineering. Feedback and questions to Prisma by next Wednesday call.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">May 31, 2026</div>
+        <div class="tl-title">PSD sign-off target</div>
+        <div class="tl-desc">Updated post-Chicago onsite. In stakeholder review. Approvers: Hiten Mistry, Julián Cañada, Tim AuBuchon. Build authorization follows sign-off + June 3 deliverable.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">This Thursday (week of May 26)</div>
+        <div class="tl-title">Moroch go/no-go deadline</div>
+        <div class="tl-desc">Moroch to confirm internal alignment and participation decision.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">June 3, 2026</div>
+        <div class="tl-title">Prisma auth/connection API release</div>
+        <div class="tl-desc">Unblocks full end-to-end development and testing. Critical dependency. On track per Prisma.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">July 1, 2026</div>
+        <div class="tl-title">Clickable PoC prototype due (Kate Adams)</div>
+        <div class="tl-desc">Sales-enabling; OMD workflow reference. Success criteria to be defined with Mike Olson.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">June / July 2026</div>
+        <div class="tl-title">Engineering start</div>
+        <div class="tl-desc">Scales up once June 3 Prisma deliverable is in hand. Formal go/no-go review before development begins.</div>
+      </div>
+      <div class="tl-item risk">
+        <div class="tl-date">September 1, 2026</div>
+        <div class="tl-title">Pilot customer backstop deadline</div>
+        <div class="tl-desc">If no signed pilot by this date, Q1 2027 GA timeline is at risk and re-baselined. Owner: Aubrey Lehrmann.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">Q4 2026</div>
+        <div class="tl-title">Full PoC targeted</div>
+        <div class="tl-desc">All project buckets. Cannot be fully validated without pilot customer engaged. Followed by Prisma 6-week certification (one full billing cycle).</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">Early Q1 2027</div>
+        <div class="tl-title">Earliest realistic go-live</div>
+        <div class="tl-desc">Assumes pilot customer identified and actively engaging during Q4 2026. Certification required before production API key issued.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ PROJECTS ════════ -->
+  <div class="tab-panel" id="tab-projects">
+
+    <h1>Work Breakdown</h1>
+    <p class="page-sub">Six buckets with moderate sequential dependencies. Updated post-Chicago onsite, May 2026.</p>
+
+    <div class="callout blue" style="margin-bottom:20px">
+      <div class="callout-label">Scope Note</div>
+      The work has been reorganized from 5 projects to 6 buckets following the Chicago onsite. This breakdown is still evolving — definition and boundaries may change as solution detail is finalized. Build authorization is not yet granted; spec and design work continues.
+    </div>
+
+    <div class="project-item">
+      <div class="proj-num">1</div>
+      <div>
+        <div class="proj-name">Authorization and Configuration</div>
+        <div class="proj-desc">OpenID Connect + API key model. Basis user authenticates via Prisma OAuth flow; org context established per session. Email matching required short-term; medium-term path to OIDC agreed. Get-orgs endpoint coming in June 3 release.</div>
+      </div>
+      <div class="proj-meta">
+        <span class="badge green">HIGH confidence</span>
+        <span class="badge amber">Blocked — Jun 3</span>
+      </div>
+    </div>
+
+    <div class="project-item">
+      <div class="proj-num">2</div>
+      <div>
+        <div class="proj-name">Master Data Linking</div>
+        <div class="proj-desc">Map Basis entities (vendors, properties, sites) to Prisma's supplier/provider/site hierarchy. Site/supplier mapping: send Basis name on create, copy GET response on update. Agency-specific configurations supported (e.g. integrated providers like Meta may be required or optional).</div>
+      </div>
+      <div class="proj-meta">
+        <span class="badge green">HIGH confidence</span>
+      </div>
+    </div>
+
+    <div class="project-item">
+      <div class="proj-num">3</div>
+      <div>
+        <div class="proj-name">Campaign Shell Management</div>
+        <div class="proj-desc">Map Basis campaigns to Prisma media plans. Basis sends campaign details on create; copies Prisma data on update. Prisma owns IO creation. Supports planning-led workflow where agency plans in Basis and pushes to Prisma media plans.</div>
+      </div>
+      <div class="proj-meta">
+        <span class="badge green">HIGH confidence</span>
+      </div>
+    </div>
+
+    <div class="project-item">
+      <div class="proj-num">4</div>
+      <div>
+        <div class="proj-name">Media Plan Line Item Management</div>
+        <div class="proj-desc">Outbound: user-initiated push of placements from Basis to Prisma (requires user identity for audit trail). Inbound: receive Prisma placement revision notifications, fetch updated data, apply changes to Basis line items (involves LIRA). Revisions keeping total IO cost unchanged stay within Prisma. Cost changes routed back to Basis via difference-resolution workflow. Start with manual push; add automation based on usage.</div>
+      </div>
+      <div class="proj-meta">
+        <span class="badge amber">LOWER confidence</span>
+        <span style="font-size:11.5px;color:#9ca3af">Most complex</span>
+      </div>
+    </div>
+
+    <div class="project-item">
+      <div class="proj-num">5</div>
+      <div>
+        <div class="proj-name">Delivery Data</div>
+        <div class="proj-desc">Push Basis delivery data to Prisma using Send Supplier Delivery API. MVP requires both automated (overnight) and manual (user-triggered) options. DSP tactic add-ons require two-step push. Show last data synced date/time. Note: current Prisma API provides monthly rollups only — daily granularity (pacing) remains an open post-PoC gap.</div>
+      </div>
+      <div class="proj-meta">
+        <span class="badge amber">MEDIUM confidence</span>
+        <span style="font-size:11.5px;color:#9ca3af">Pacing gap open</span>
+      </div>
+    </div>
+
+    <div class="project-item">
+      <div class="proj-num">6</div>
+      <div>
+        <div class="proj-name">Notifications / Vendor IO and Campaign Approval Sync</div>
+        <div class="proj-desc">Subscribe to and handle Prisma webhook/notification events (campaign updates, placement changes, delivery updates). Notifications carry minimal payload — must fetch full data on receipt. Feeds into buckets 3 and 4. Vendor IO and campaign approval sync included; IO status scope (all direct vendors vs. eSeller only) to be confirmed with Prisma.</div>
+      </div>
+      <div class="proj-meta">
+        <span class="badge amber">MEDIUM confidence</span>
+      </div>
+    </div>
+
+    <hr>
+    <div class="section-heading">Out of Scope — V1</div>
+    <div class="callout gray">
+      Monthly billing breakouts/distributions · Bulk campaign auto-matching · Automated Prisma→Basis revision sync (start manual) · DSP integration (deferred from V1) · Daily delivery granularity (monthly totals only in V1)
+    </div>
+
+  </div>
+
+  <!-- ════════ DECISIONS ════════ -->
+  <div class="tab-panel" id="tab-decisions">
+
+    <h1>Key Decisions</h1>
+    <p class="page-sub">Recorded decisions across the program. Most recent first.</p>
+
+    <div style="border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; margin-bottom: 12px;">
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">May 26, 2026</div>
+        <div class="decision-text"><strong>Multiple pilot customers acceptable</strong> — Basis and Prisma agreed that more than one pilot customer is acceptable; multiple pilots welcome if interest is sufficient.</div>
+        <span class="badge green">Confirmed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">May 2026</div>
+        <div class="decision-text"><strong>Work scope updated to 6 buckets</strong> — Following Chicago onsite. Authorization, Master Data Linking, Campaign Shell, Line Item Management, Delivery Data, Notifications / IO Approval Sync.</div>
+        <span class="badge green">Confirmed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">May 11, 2026</div>
+        <div class="decision-text"><strong>Revision / actualization working model agreed</strong> — Actualizations keeping total IO cost unchanged stay within Prisma; Basis sees no net change. Cost changes route back to Basis via difference-resolution workflow.</div>
+        <span class="badge green">Agreed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">May 11, 2026</div>
+        <div class="decision-text"><strong>Pilot measurement baseline to be captured</strong> — Customer's current process baseline (time, effort, accuracy gaps) captured at onboarding for post-launch comparison.</div>
+        <span class="badge green">Agreed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">May 7, 2026</div>
+        <div class="decision-text"><strong>Continue (spec only) — build not authorized</strong> — Executive Decision Worksheet: work continues as spec/mapping only. Build authorization gated on PSD sign-off AND June 3 Mediaocean deliverable received. Operating rule: "If it would be expensive to redo after a pilot, we do not build it before a pilot."</div>
+        <span class="badge amber">Build Pending</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">May 7, 2026</div>
+        <div class="decision-text"><strong>Pilot search continues; 9/1 backstop confirmed</strong> — Outreach active across 13-prospect list. If no signed pilot by September 1, GA timeline is re-baselined. Owner: Aubrey Lehrmann.</div>
+        <span class="badge amber">Deadline: 9/1</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">April 8, 2026</div>
+        <div class="decision-text"><strong>Email-matching approach accepted by Prisma</strong> — Short-term path agreed. Internal Basis product sign-off still pending due to tension with multi-agency architecture.</div>
+        <span class="badge amber">Basis Sign-off Pending</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">April 2026</div>
+        <div class="decision-text"><strong>PoC-first strategy pivot</strong> — Following failure to identify viable pilot among overlapping agency accounts (Innocean, Moroch assessed and ruled out as managed-service). PoC proceeds using OMD workflow as reference.</div>
+        <span class="badge green">Confirmed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">April 2026</div>
+        <div class="decision-text"><strong>OpenID Connect + API key auth model agreed</strong> — Every request includes API Key (partner ID) + OAuth Bearer Token (user + org context).</div>
+        <span class="badge green">Agreed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px;">
+        <div class="decision-date">April 2026</div>
+        <div class="decision-text"><strong>Prisma owns IO creation</strong> — IO creation workflow stays in Prisma; Basis does not own IO creation in V1.</div>
+        <span class="badge green">Confirmed</span>
+      </div>
+      <div class="decision-item" style="padding: 14px 16px; border-bottom: none;">
+        <div class="decision-date">April 2026</div>
+        <div class="decision-text"><strong>No permission mirroring in Basis</strong> — Permissions philosophy accepted by Mediaocean Security. No mirroring required on Basis side.</div>
+        <span class="badge green">Accepted by MO Security</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ ACTIONS ════════ -->
+  <div class="tab-panel" id="tab-actions">
+
+    <h1>Open Actions</h1>
+    <p class="page-sub">Current open items as of May 26, 2026.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:150px">Owner</th>
+          <th>Action</th>
+          <th style="width:80px">Priority</th>
+          <th style="width:120px">Due</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="owner-cell">Aubrey Lehrmann</td>
+          <td>Continue pilot customer outreach. Confirm Moroch go/no-go by Thursday. Report on full prospect list status; confirm "we have one" or "we need more outreach." Communicate to Prisma re: broader outreach beyond Moroch.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">This week / ongoing</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Aubrey Lehrmann</td>
+          <td>PSD: Complete stakeholder review and route for final sign-off by May 31. Approvers: Hiten Mistry, Julián Cañada, Tim AuBuchon.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">May 31, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Aubrey Lehrmann + Mike Olson</td>
+          <td>Pursue outreach to Bob Bernstein at Zimmerman via Shawn; Aubrey to follow up with Cindy if no response.</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">Ongoing</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Basis Engineering</td>
+          <td>Complete review of April 30 Prisma release documentation. Provide feedback and questions to Prisma by next Wednesday's weekly call.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">Next Wed call</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Basis (PMO)</td>
+          <td>Review Prisma certification test cases received. Determine any additional test cases required on Basis's side. Provide feedback within two weeks.</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">~2 weeks</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Julián Cañada</td>
+          <td>Follow through to Kasey on auth callback URL confirmation. Confirm whether get-org-details sandbox access is available before June 3 release.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">This week</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Kate Adams</td>
+          <td>Deliver clickable PoC prototype using OMD workflow as reference. Define success criteria with Mike Olson (scope, sizzle, what prototype must show in sales process).</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">July 1, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Hiten / Julián / Tim</td>
+          <td>Work through revision and actualization scenarios with real Prisma data examples to validate difference-resolution handling logic.</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">Ongoing</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Hiten Mistry</td>
+          <td>Post clarifying question to Mediaocean: will Innovid (or similar ad server) identifiers be exposed in the Prisma API so Basis can pull delivery data directly and compare against Prisma totals?</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">Ongoing</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Mediaocean (Pending)</td>
+          <td>June 3 auth/API release to sandbox with full documentation and access. On track per last Prisma update.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">June 3, 2026</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <div class="section-heading">Standing Items</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="card">
+        <div class="card-title">Recurring Meetings</div>
+        <p>Internal Basis weekly: Aubrey, Hiten, Tim AuBuchon, Julián, Alexandria, Kate Adams.<br><br>External Prisma/Basis weekly: Wednesdays — agenda due Tuesday EOD.<br><br>Executive bi-weekly update: Tim Smith (covers Prisma + SAM).</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Key Contacts</div>
+        <p><strong>Basis:</strong> Ilia Fonariov (Program Lead), Aubrey Lehrmann (VP Product), Hiten Mistry (SVP Product), Julián Cañada (Dir. Eng.), Tim AuBuchon (Sr. PM), Kate Adams (VP Design), Alexandria Strother (PM)<br><br><strong>Mediaocean/Prisma:</strong> Ramsey (President), Joseph Vazquez (PM), Melissa Le / Kasey L. (Product), Anthony Testino (EVP Ops), Bryan Wilford (GTM)</p>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  document.querySelectorAll('.topnav-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.topnav-tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const panel = document.getElementById('tab-' + btn.dataset.tab);
+      if (panel) panel.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

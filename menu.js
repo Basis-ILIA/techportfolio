@@ -2,32 +2,19 @@
    BASIS TECH PORTFOLIO — MENU CONFIGURATION
    ═══════════════════════════════════════════════════════════════
 
-   ↓ EDIT THIS FILE TO ADD / REMOVE / REORDER MENU ITEMS ↓
+   Edit this file to add / remove / reorder pages in the sidebar.
 
-   The NAV_ITEMS array drives the sidebar nav on every page.
-
-   ── ITEM FIELDS ───────────────────────────────────────────────
+   ── ITEM FIELDS ──────────────────────────────────────────────
      id        Unique identifier. Used for active highlighting.
-     label     Text shown in the nav (required).
-     href      URL or relative file path (required, unless `children`).
-     external  true → opens in new tab + shows external icon.
-     children  Array of child items (creates a collapsible parent).
-     section   Sidebar section label this item belongs under.
-               Items with the same `section` are grouped together.
-     hideFromSidebar  true → do not show in sidebar (rare).
-
-   ── SECTIONS ──────────────────────────────────────────────────
-     Sections are derived from the `section` field on items.
-     Just set the same string on multiple items and they'll be
-     grouped under a single header. Order = first appearance.
-
-   ── TO ADD A NEW PAGE ─────────────────────────────────────────
-     1. Copy any block in NAV_ITEMS.
-     2. Edit fields. Save. Refresh browser. Done — no build step.
-
-   ── TO ADD A SUB-MENU ─────────────────────────────────────────
-     Add a `children: [...]` array (see Mediaocean below).
-     The parent expands/collapses; children are full nav items.
+     label     Text shown in the sidebar (required).
+     href      Relative path or URL (required unless `children`).
+     external  true → opens in new tab + external icon.
+     children  Array of child items (collapsible parent).
+     section   Sidebar section label. Items sharing the same
+               string are grouped under one heading.
+     status    'active' | 'planning' | 'draft' | 'external'
+               Shows a colored dot next to the item.
+     hideFromSidebar  true → skip rendering in sidebar.
    ═══════════════════════════════════════════════════════════════ */
 
 const NAV_ITEMS = [
@@ -37,15 +24,14 @@ const NAV_ITEMS = [
     id: 'home',
     label: 'Home',
     href: 'index.html',
-    section: null,   // null = appears at the top, above sections
+    section: null,
   },
 
   // ─── Roadmap ─────────────────────────────────────────────────
   {
     id: 'roadmap',
     label: 'Technology Roadmap',
-    href: 'https://orange-coast-06b045110.4.azurestaticapps.net/2026-summer-roadmap.html',
-    external: true,
+    href: 'tech_roadmap.html',
     section: 'Roadmap',
     status: 'active',
   },
@@ -61,7 +47,7 @@ const NAV_ITEMS = [
       {
         id: 'prisma',
         label: 'Prisma Integration',
-        href: 'prisma-integration-status.html',
+        href: 'prisma_integration_status.html',
         status: 'active',
       },
       {
@@ -88,48 +74,31 @@ const NAV_ITEMS = [
     status: 'active',
   },
 
-  // ─── Add new pages below this line ───────────────────────────
+  // ─── Add new sections / pages below ──────────────────────────
   //
-  // Example: a new program with sub-workstreams
   // {
-  //   id: 'sam',
-  //   label: 'New Program',
-  //   href: 'new-program-overview.html',
+  //   id: 'example',
+  //   label: 'New Page',
+  //   href: 'new-page.html',
   //   section: 'Programs',
   //   status: 'planning',
-  //   children: [
-  //     { id: 'sub1', label: 'Workstream 1', href: 'sub1.html', status: 'planning' },
-  //     { id: 'sub2', label: 'Workstream 2', href: 'sub2.html', status: 'draft' },
-  //   ],
-  // },
-  //
-  // Example: an external resource link
-  // {
-  //   id: 'architecture',
-  //   label: 'Architecture Docs',
-  //   href: 'https://example.com/...',
-  //   external: true,
-  //   section: 'Resources',
-  //   status: 'external',
   // },
 
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   PORTFOLIO METADATA — shown on the home page splash + footer
+   PORTFOLIO METADATA — home page splash + footer
    ═══════════════════════════════════════════════════════════════ */
 const PORTFOLIO_META = {
   eyebrow: 'Basis Technology',
   title: 'Tech Portfolio',
-  lede: 'Roadmap, program statuses, and other reference materials for the Basis Technology sector.',
+  lede: 'A single destination for technology strategy and execution visibility across the Basis product engineering organization. Browse the Q2–Q3 2026 technology roadmap across 15 product streams and 173 projects, review active program status updates from high-level overviews to granular workstream detail, track production health metrics, and access supporting reference materials — all in one place.',
   lastUpdated: 'May 27, 2026',
   owner: '© 2026 Basis Global Technologies, LLC',
 };
 
 /* ═══════════════════════════════════════════════════════════════
    STATUS PILL DEFINITIONS
-   Used for sidebar dots and home page status counts.
-   You can add custom statuses here.
    ═══════════════════════════════════════════════════════════════ */
 const STATUS_DEFS = {
   active:   { label: 'Active',   className: 'green' },
