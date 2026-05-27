@@ -1,62 +1,119 @@
-# Basis · Tech Portfolio
+# Basis Tech Portfolio
 
-A static site for the Basis Technology sector portfolio. Matches the visual
-language of the Summer 2026 Roadmap and the Prisma status page.
+A static portfolio site for the Basis Technology sector. No build step, no framework — pure HTML / CSS / JS that runs in any browser and hosts on any static host (Azure Static Web Apps, S3, GitHub Pages, etc.).
 
-## Files
+## File structure
 
-| File                      | What it is                                                 |
-|---------------------------|------------------------------------------------------------|
-| `index.html`              | Home / splash page. Lists everything in the directory.     |
-| `mediaocean-status.html`  | Mediaocean (Prisma) program status — same as before.       |
-| **`menu.js`**             | **← Edit this to add/remove/reorder menu items.**          |
-| `shared.css`              | All styles, light + dark theme tokens.                     |
-| `shared.js`               | Renders the top nav, handles theme toggle, builds home.    |
+```
+basis-tech-portfolio/
+├── index.html                          ← Home (splash + status summary)
+├── mediaocean-overview.html            ← Mediaocean program overview
+├── prisma-integration-status.html      ← Prisma workstream status
+├── innovid-integration-status.html     ← Innovid workstream (scaffold — pending content)
+├── sam-status.html                     ← SAM workstream (scaffold — pending content)
+├── prod-kpi-dashboard.html             ← Production KPI Dashboard (full app, wrapped in portfolio shell)
+│
+├── shared.css                          ← All theming, layout, components
+├── shared.js                           ← Sidebar nav, theme toggle, hamburger, home renderer
+└── menu.js                             ← ← EDIT THIS to add/remove pages
+```
 
-## Adding a new section
+## Adding or editing pages
 
-Open `menu.js`. Copy any block in `NAV_ITEMS` and edit the fields:
+**1. Edit `menu.js`** to register the new page in the sidebar. The file is heavily commented.
+
+**2. Create the HTML file** — use any existing status page as a template:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My New Page · Basis Tech Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <script src="menu.js"></script>
+  <script src="shared.js"></script>
+</head>
+<body>
+
+<div class="page page-narrow">
+  <h1>My New Page</h1>
+  <p class="page-sub">One-line description.</p>
+
+  <!-- ... your content ... -->
+</div>
+
+<script>
+  BasisPortfolio.init('my-page-id', { context: '<strong>Section</strong> · My Page' });
+</script>
+
+</body>
+</html>
+```
+
+The `init('my-page-id', ...)` ID must match the `id` you set in `menu.js`.
+
+## Sub-menus (parent + children)
+
+To create a collapsible parent in the sidebar (like Mediaocean), add a `children` array in `menu.js`:
 
 ```js
 {
-  id: 'sam',                         // unique
-  label: 'SAM',                      // shown in the nav
-  href: 'sam-status.html',           // page to link to
-  section: 'Program Status',         // groups it on the home page
-  desc: 'One-line description.',     // shown on the home card
-  status: 'planning',                // active | planning | draft | external | soon
+  id: 'my-program',
+  label: 'My Program',
+  href: 'my-program-overview.html',
+  section: 'Programs',
+  status: 'active',
+  children: [
+    { id: 'sub1', label: 'Workstream 1', href: 'sub1.html', status: 'active' },
+    { id: 'sub2', label: 'Workstream 2', href: 'sub2.html', status: 'planning' },
+  ],
 },
 ```
 
-Save. Refresh the browser. That's it — no build step.
+## Theme
 
-To make a new status page, copy `mediaocean-status.html` to a new filename,
-edit the content, and change the `BasisPortfolio.initNav('mediaocean')` line
-at the bottom to use your new `id`.
+Light and dark modes are supported and toggleable via the sun/moon button in the top bar. Preference persists to `localStorage` per browser. Initial theme respects the user's OS preference.
 
-## Splash page text
+CSS variables in `shared.css` drive everything. To tweak colors, edit the `:root` (light) and `[data-theme="dark"]` blocks.
 
-Edit `PORTFOLIO_META` at the bottom of `menu.js` to change the home-page
-title, lede, and "updated" date.
+## Components available in `shared.css`
 
-## Light / dark mode
+- **`.kpi-row` + `.kpi-cell`** — Top-of-page metric strip
+- **`.card`** — Bordered content card
+- **`.callout` with `.red` `.amber` `.green` `.blue` `.gray`** — Highlighted box
+- **`.badge` with same color variants** — Pill labels
+- **`.pilot-table` / `.data-table`** — Styled tables, with `.top-candidate` row highlight
+- **`.timeline` + `.tl-item` (`.done` `.active` `.upcoming` `.risk`)** — Vertical timeline
+- **`.project-item`** — Numbered project list rows
+- **`.decision-list-wrap` + `.decision-item`** — Decision log
+- **`.section-heading`** — Small uppercase section label
+- **`.page-tabs` + `.tab-panel`** — In-page tab navigation (see Prisma page)
 
-Top right corner of every page. The choice is saved to `localStorage` so
-it persists across pages and visits. First-time visitors get whatever
-their OS prefers.
+## Local preview
 
-## Status colors
+Open any `.html` file directly in a browser — no server required.
 
-| status     | badge   |
-|------------|---------|
-| `active`   | green   |
-| `planning` | blue    |
-| `draft`    | gray    |
-| `external` | gray    |
-| `soon`     | amber   |
+Or, for proper relative-path testing:
+
+```bash
+cd basis-tech-portfolio
+python3 -m http.server 8000
+# open http://localhost:8000
+```
 
 ## Hosting
 
-Drop the whole `basis-tech-portfolio/` folder onto any static host
-(Azure Static Web Apps, Netlify, GitHub Pages, S3, etc.). No server,
-no build.
+Just upload the folder. The site is fully static. Tested patterns:
+
+- **Azure Static Web Apps** — Drop into the `/` deploy path.
+- **GitHub Pages** — Push to `gh-pages` branch or `/docs` folder.
+- **S3 / Cloudfront** — `aws s3 sync . s3://bucket/`.
+
+## The Production KPI Dashboard
+
+`prod-kpi-dashboard.html` is a fully self-contained app (Chart.js, CSV import, manual data entry, localStorage) wrapped in the same portfolio shell. Its internal logic was left untouched; only theme tokens and the topbar were adapted so it matches the rest of the portfolio. Theme changes trigger a chart re-render.
+
+The dashboard's data is embedded as a `KPI_DATA` block near the bottom of the file. The Python script that generates this data (`fetch-prod-kpi.py`) writes between the `KPI_DATA_START` and `KPI_DATA_END` markers — that mechanism still works after wrapping.

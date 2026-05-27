@@ -3,61 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mediaocean — Prisma Integration Status · Basis Tech Portfolio</title>
+<title>Prisma Integration Status · Basis Tech Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared.css">
 <script src="menu.js"></script>
 <script src="shared.js"></script>
-<style>
-  /* Page-specific: in-page tab bar that lives BELOW the main portfolio nav */
-  .page-tabs {
-    display: flex;
-    align-items: center;
-    padding: 0 32px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    height: 42px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    position: sticky;
-    top: 48px;
-    z-index: 90;
-  }
-  .page-tabs::-webkit-scrollbar { display: none; }
-  .page-tabs button {
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    padding: 0 14px;
-    color: var(--text-muted);
-    height: 100%;
-    white-space: nowrap;
-    transition: color 0.12s;
-  }
-  .page-tabs button:hover { color: var(--text); }
-  .page-tabs button.active {
-    color: var(--text);
-    border-bottom-color: var(--accent);
-  }
-  .page-tabs-spacer { flex: 1; }
-  .page-tabs-meta {
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-</style>
 </head>
 <body>
 
-<nav class="topnav" id="nav-root"></nav>
-
-<!-- In-page tabs (Overview / Pilot / Timeline / etc.) -->
+<!-- In-page tab bar (Overview / Pilot / Timeline / etc.) -->
 <div class="page-tabs">
   <button class="active" data-tab="overview">Overview</button>
   <button data-tab="pilot">Pilot Customer</button>
@@ -72,7 +26,6 @@
   </div>
 </div>
 
-<!-- SUBBAR -->
 <div class="subbar">
   <span><strong>3</strong> Blockers</span>
   <span><strong>12</strong> Prospects in outreach</span>
@@ -86,7 +39,7 @@
   <!-- ════════ OVERVIEW ════════ -->
   <div class="tab-panel active" id="tab-overview">
 
-    <h1>Integration Status</h1>
+    <h1>Prisma Integration Status</h1>
     <p class="page-sub">Automated two-way ERP integration between Basis and Prisma (Mediaocean). Week of May 26, 2026.</p>
 
     <div class="kpi-row">
@@ -610,8 +563,7 @@
 </div><!-- /page -->
 
 <script>
-  // Initialize portfolio nav with "mediaocean" as the active item
-  BasisPortfolio.initNav('mediaocean');
+  BasisPortfolio.init('prisma', { context: '<strong>Mediaocean</strong> · Prisma Integration' });
 
   // In-page tab switching
   document.querySelectorAll('.page-tabs button').forEach(btn => {

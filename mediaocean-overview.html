@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mediaocean — Overview · Basis Tech Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<script src="menu.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+
+<div class="page page-narrow">
+
+  <h1>Mediaocean</h1>
+  <p class="page-sub">Program-level overview of the Mediaocean partnership and its three active workstreams.</p>
+
+  <div class="kpi-row">
+    <div class="kpi-cell">
+      <div class="kpi-label">Workstreams</div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-sub">Prisma · Innovid · SAM</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Program Status</div>
+      <div class="kpi-value" style="font-size:16px;padding-top:3px"><span class="badge green">Active</span></div>
+      <div class="kpi-sub" style="margin-top:6px">All workstreams in progress</div>
+    </div>
+    <div class="kpi-cell">
+      <div class="kpi-label">Earliest GA</div>
+      <div class="kpi-value">Q1 2027</div>
+      <div class="kpi-sub">Prisma — gated on pilot</div>
+    </div>
+  </div>
+
+  <div class="section-heading">About Mediaocean</div>
+  <div class="card">
+    <p>Mediaocean is a strategic partnership covering multiple integration points between Basis and the Mediaocean platform family. The program is currently structured as three workstreams, each with its own scope, owner, and timeline. Use the sidebar to drill into any individual workstream for detailed status, decisions, and open actions.</p>
+  </div>
+
+  <div class="section-heading">Workstreams</div>
+
+  <div class="project-item">
+    <div class="proj-num">1</div>
+    <div>
+      <div class="proj-name"><a href="prisma-integration-status.html">Prisma Integration</a></div>
+      <div class="proj-desc">Automated two-way ERP integration between Basis and Prisma. Synchronizes campaign planning, IO management, placement-level delivery data, and billing. Currently in solution definition + PoC planning; pilot customer search active.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted)">
+        <strong style="color:var(--text)">Owner:</strong> Aubrey Lehrmann (Product) · Ilia Fonariov (Program Lead)
+        &nbsp;·&nbsp; <strong style="color:var(--text)">Target GA:</strong> Q1 2027
+      </div>
+    </div>
+    <div class="proj-meta">
+      <span class="badge green">On Track</span>
+      <span class="badge amber">Pilot Required</span>
+    </div>
+  </div>
+
+  <div class="project-item">
+    <div class="proj-num">2</div>
+    <div>
+      <div class="proj-name"><a href="innovid-integration-status.html">Innovid Ad Server Integration</a></div>
+      <div class="proj-desc">Integration between Basis and the Innovid ad server for campaign and placement sync plus delivery reporting at CM360 parity. Currently at risk due to outstanding field gap validation and auth work at Innovid. File-based delivery confirmed as the architecture; engineering target September 1; MCA go-live November 1.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted)">
+        <strong style="color:var(--text)">Owner:</strong> Jon Iturralde (Product) · Muzzammil Singdi (PM)
+        &nbsp;·&nbsp; <strong style="color:var(--text)">Eng. Complete:</strong> Sep 1, 2026
+      </div>
+    </div>
+    <div class="proj-meta">
+      <span class="badge red">At Risk</span>
+      <span class="badge amber">Escalating</span>
+    </div>
+  </div>
+
+  <div class="project-item">
+    <div class="proj-num">3</div>
+    <div>
+      <div class="proj-name"><a href="sam-status.html">SAM (Social Ads Manager)</a></div>
+      <div class="proj-desc">Migration of MCA-managed social advertising campaigns to the Basis platform. Meta Ad Scheduling delivery targeted June 6–15, which unlocks 30–40% of $70–80M in annual Meta-directed social spend. Campaign migration begins H2 2026; 50% of customers transitioned by EOY 2026.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted)">
+        <strong style="color:var(--text)">Owner:</strong> Tim Smith · Ilia Fonariov (PM)
+        &nbsp;·&nbsp; <strong style="color:var(--text)">50% Transition Target:</strong> EOY 2026
+      </div>
+    </div>
+    <div class="proj-meta">
+      <span class="badge blue">In Progress</span>
+      <span class="badge green">On Track</span>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="section-heading">Program Contacts</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="card">
+      <div class="card-title">Basis</div>
+      <p>Ilia Fonariov (Program Lead, Mediaocean)<br>
+      Aubrey Lehrmann (VP Product — Prisma)<br>
+      Hiten Mistry (SVP Product)<br>
+      Jon Iturralde (Product Owner — Innovid)<br>
+      Tim Smith (Owner — SAM)</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Mediaocean</div>
+      <p>Ramsey (President)<br>
+      Anthony Testino (EVP Ops)<br>
+      Bryan Wilford (GTM)<br>
+      [Workstream-specific contacts noted on each status page]</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  BasisPortfolio.init('mediaocean', { context: '<strong>Mediaocean</strong> · Overview' });
+</script>
+
+</body>
+</html>

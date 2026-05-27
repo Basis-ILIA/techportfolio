@@ -3,30 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PROD Support & Incident KPIs · Basis</title>
+<title>Production KPI Dashboard · Basis Tech Portfolio</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iNSIgZmlsbD0iIzBkMTExNyIvPjxyZWN0IHg9IjQiIHk9IjYiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMS41IiBmaWxsPSIjZjg1MTQ5Ii8+PHJlY3QgeD0iMTMiIHk9IjEzIiB3aWR0aD0iNyIgaGVpZ2h0PSIxMyIgcng9IjEuNSIgZmlsbD0iI2UzYjM0MSIvPjxyZWN0IHg9IjIyIiB5PSIxOCIgd2lkdGg9IjciIGhlaWdodD0iOCIgcng9IjEuNSIgZmlsbD0iIzU4YTZmZiIvPjxyZWN0IHg9IjQiIHk9IjI3IiB3aWR0aD0iMjUiIGhlaWdodD0iMS41IiByeD0iMC43NSIgZmlsbD0iIzMwMzYzZCIvPjwvc3ZnPg==">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<script src="menu.js"></script>
+<script src="shared.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0d1117;--surface:#161b22;--surface2:#21262d;
-  --border:#30363d;--border2:#484f58;
-  --text:#e6edf3;--muted:#8b949e;--muted2:#6e7681;
-  --accent:#58a6ff;--green:#3fb950;--yellow:#d29922;
-  --red:#f85149;--orange:#e3b341;
+/* Dashboard-specific tokens — adapt to portfolio's light/dark theme */
+[data-theme="dark"],
+:root {
+  --d-bg:#0d1117;--d-surface:#161b22;--d-surface2:#21262d;
+  --d-border:#30363d;--d-border2:#484f58;
+  --d-text:#e6edf3;--d-muted:#8b949e;--d-muted2:#6e7681;
+  --d-accent:#58a6ff;--d-green:#3fb950;--d-yellow:#d29922;
+  --d-red:#f85149;--d-orange:#e3b341;
 }
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+[data-theme="light"] {
+  --d-bg:#ffffff;--d-surface:#ffffff;--d-surface2:#f9fafb;
+  --d-border:#e5e7eb;--d-border2:#d1d5db;
+  --d-text:#111111;--d-muted:#6b7280;--d-muted2:#9ca3af;
+  --d-accent:#2563eb;--d-green:#059669;--d-yellow:#d97706;
+  --d-red:#dc2626;--d-orange:#d97706;
+}
+/* Map the dashboard's original variable names to the new theme-aware ones */
+:root{
+  --bg:var(--d-bg);--surface:var(--d-surface);--surface2:var(--d-surface2);
+  --border:var(--d-border);--border2:var(--d-border2);
+  --text:var(--d-text);--muted:var(--d-muted);--muted2:var(--d-muted2);
+  --accent:var(--d-accent);--green:var(--d-green);--yellow:var(--d-yellow);
+  --red:var(--d-red);--orange:var(--d-orange);
+}
 
-/* ── Topbar ── */
-.topbar{display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;flex-wrap:wrap}
-.topbar-title{font-size:15px;font-weight:600;flex:1;white-space:nowrap}
-.topbar-title span{color:var(--muted);font-weight:400}
-.btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap}
+/* ── Dashboard top control bar (sits below shared topbar) ── */
+.dash-toolbar{display:flex;align-items:center;gap:12px;padding:10px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.dash-toolbar-title{font-size:14px;font-weight:600;flex:1;white-space:nowrap;color:var(--text)}
+.dash-toolbar-title span{color:var(--muted);font-weight:400}
+.btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap;font-family:inherit}
 .btn:hover{border-color:var(--border2)}
-.btn-accent{background:var(--accent);color:#000;border-color:var(--accent)}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+[data-theme="dark"] .btn-accent{color:#000}
 .btn-accent:hover{opacity:.9}
-select.q-select{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer}
+select.q-select{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;font-family:inherit}
 .last-updated{font-size:11px;color:var(--muted);white-space:nowrap}
 
 /* ── Main layout ── */
@@ -40,8 +60,10 @@ select.q-select{background:var(--surface2);border:1px solid var(--border);color:
 .import-toggle-arrow{color:var(--muted);font-size:11px;transition:transform .2s}
 .import-body{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;border-top:1px solid var(--border)}
 .drop-zone{border:2px dashed var(--border2);border-radius:8px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface2);position:relative}
-.drop-zone:hover,.drop-zone.over{border-color:var(--accent);background:rgba(88,166,255,.06)}
-.drop-zone.loaded{border-color:var(--green);background:rgba(63,185,80,.06)}
+[data-theme="dark"] .drop-zone:hover,[data-theme="dark"] .drop-zone.over{border-color:var(--accent);background:rgba(88,166,255,.06)}
+[data-theme="dark"] .drop-zone.loaded{border-color:var(--green);background:rgba(63,185,80,.06)}
+[data-theme="light"] .drop-zone:hover,[data-theme="light"] .drop-zone.over{border-color:var(--accent);background:#eff6ff}
+[data-theme="light"] .drop-zone.loaded{border-color:var(--green);background:#f0fdf4}
 .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .dz-icon{font-size:26px;margin-bottom:8px}
 .dz-label{font-weight:500;font-size:13px;margin-bottom:4px}
@@ -87,12 +109,17 @@ tbody tr:hover td{background:var(--surface2)}
 .num{text-align:right;font-variant-numeric:tabular-nums;font-family:'SF Mono',Consolas,monospace;font-size:12px}
 
 /* ── Severity chips ── */
-.chip{display:inline-flex;align-items:center;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500}
-.chip-l1{background:rgba(248,81,73,.15);color:#f85149}
-.chip-l2{background:rgba(227,179,65,.15);color:#e3b341}
-.chip-l3{background:rgba(210,153,34,.15);color:#d29922}
-.chip-l4{background:rgba(88,166,255,.15);color:#58a6ff}
-.chip-l5{background:rgba(139,148,158,.15);color:#8b949e}
+.chip{display:inline-flex;align-items:center;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:500;border:1px solid transparent}
+[data-theme="dark"] .chip-l1{background:rgba(248,81,73,.15);color:#f85149}
+[data-theme="dark"] .chip-l2{background:rgba(227,179,65,.15);color:#e3b341}
+[data-theme="dark"] .chip-l3{background:rgba(210,153,34,.15);color:#d29922}
+[data-theme="dark"] .chip-l4{background:rgba(88,166,255,.15);color:#58a6ff}
+[data-theme="dark"] .chip-l5{background:rgba(139,148,158,.15);color:#8b949e}
+[data-theme="light"] .chip-l1{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+[data-theme="light"] .chip-l2{background:#fffbeb;color:#d97706;border-color:#fde68a}
+[data-theme="light"] .chip-l3{background:#fffbeb;color:#d97706;border-color:#fde68a}
+[data-theme="light"] .chip-l4{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+[data-theme="light"] .chip-l5{background:#f3f4f6;color:#6b7280;border-color:#e5e7eb}
 
 /* ── Compliance colors ── */
 .ok{color:var(--green);font-weight:500}
@@ -127,7 +154,9 @@ tbody tr:hover td{background:var(--surface2)}
 .uptime-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 
 /* ── Schedule info bar ── */
-.schedule-bar{display:none;align-items:center;gap:16px;padding:9px 24px;background:rgba(88,166,255,.06);border-bottom:1px solid rgba(88,166,255,.15);font-size:12px;color:var(--muted);flex-wrap:wrap}
+[data-theme="dark"] .schedule-bar{background:rgba(88,166,255,.06);border-bottom:1px solid rgba(88,166,255,.15)}
+[data-theme="light"] .schedule-bar{background:#eff6ff;border-bottom:1px solid #bfdbfe}
+.schedule-bar{display:none;align-items:center;gap:16px;padding:9px 24px;font-size:12px;color:var(--muted);flex-wrap:wrap}
 .schedule-bar .sb-item{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .schedule-bar .sb-cmd{font-family:'SF Mono',Consolas,monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--text);cursor:pointer;user-select:all}
 .schedule-bar .sb-cmd:hover{border-color:var(--accent)}
@@ -139,19 +168,26 @@ tbody tr:hover td{background:var(--surface2)}
 .sec-jira-link:hover{text-decoration:underline}
 
 /* ── Warning banner ── */
-.warn-banner{font-size:12px;color:var(--yellow);background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.25);border-radius:6px;padding:8px 12px;margin-top:12px}
+[data-theme="dark"] .warn-banner{color:#d29922;background:rgba(210,153,34,.08);border:1px solid rgba(210,153,34,.25)}
+[data-theme="light"] .warn-banner{color:#d97706;background:#fffbeb;border:1px solid #fde68a}
+.warn-banner{font-size:12px;border-radius:6px;padding:8px 12px;margin-top:12px}
+
+/* ── Quick links bar (replaces inline footer) ── */
+.dash-quicklinks{text-align:center;padding:20px;color:var(--muted2);font-size:11px;border-top:1px solid var(--border);margin-top:8px}
+.dash-quicklinks a{color:var(--accent);text-decoration:none}
+.dash-quicklinks a:hover{text-decoration:underline}
 
 /* ── Responsive ── */
 @media(max-width:1000px){.charts-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:700px){.summary-grid{grid-template-columns:1fr}.import-body{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.input-grid{grid-template-columns:repeat(2,1fr)}.uptime-grid{grid-template-columns:repeat(2,1fr)}.jql-inner{grid-template-columns:1fr}}
-@media print{.topbar .btn,.import-card{display:none}body,html{background:#fff;color:#000}}
+@media print{.dash-toolbar .btn,.import-card,.sidebar,.topbar,.footer{display:none}body,html{background:#fff;color:#000}}
 </style>
 </head>
 <body>
 
-<!-- ═══ TOPBAR ═══ -->
-<div class="topbar">
-  <div class="topbar-title">PROD Support &amp; Incident KPIs <span>· Basis</span></div>
+<!-- ═══ DASHBOARD TOOLBAR (in-page; sits below the shared portfolio topbar) ═══ -->
+<div class="dash-toolbar">
+  <div class="dash-toolbar-title">PROD Support &amp; Incident KPIs <span>· Basis</span></div>
   <select class="q-select" id="quarterSelect">
     <option>Q2 2026</option><option>Q3 2026</option><option>Q4 2026</option><option>Q1 2027</option>
   </select>
@@ -407,18 +443,30 @@ tbody tr:hover td{background:var(--surface2)}
     </div>
   </div>
 
-  <div style="text-align:center;padding:20px;color:var(--muted2);font-size:11px;border-top:1px solid var(--border);margin-top:8px">
-    PROD Support &amp; Incident KPIs · Basis · <span id="footerQ">Q2 2026</span> ·
-    <a href="https://basis.atlassian.net/wiki/spaces/~nicholas.geniusz/pages/1790672906" target="_blank" style="color:var(--accent);text-decoration:none">Setup Guide</a> ·
-    <a href="https://basis.atlassian.net/jira/software/c/projects/PROD/boards/65" target="_blank" style="color:var(--accent);text-decoration:none">PROD Board</a> ·
-    <a href="https://basis.atlassian.net/wiki/spaces/CTP/pages/1384841221" target="_blank" style="color:var(--accent);text-decoration:none">Process Doc</a>
+  <div class="dash-quicklinks">
+    Quick links · <span id="footerQ">Q2 2026</span> ·
+    <a href="https://basis.atlassian.net/wiki/spaces/~nicholas.geniusz/pages/1790672906" target="_blank">Setup Guide</a> ·
+    <a href="https://basis.atlassian.net/jira/software/c/projects/PROD/boards/65" target="_blank">PROD Board</a> ·
+    <a href="https://basis.atlassian.net/wiki/spaces/CTP/pages/1384841221" target="_blank">Process Doc</a>
   </div>
 </div>
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  Constants
+//  Portfolio shell — wraps the dashboard with sidebar+topbar+footer
+//  Must run before DOMContentLoaded so dashboard's logic can find its elements
 // ═══════════════════════════════════════════════════════
+BasisPortfolio.init('prod-kpi', { context: '<strong>Dashboards</strong> · Production KPIs' });
+
+// Re-render charts on theme change so colors update
+window.addEventListener('themechange', () => {
+  if (typeof renderDashboard === 'function') {
+    try { renderDashboard(); } catch (e) { console.warn('Chart re-render failed:', e); }
+  }
+});
+</script>
+
+<script>
 const SEVS = ['Level 1','Level 2','Level 3','Level 4','Level 5'];
 const SEV_COLOR = {'Level 1':'#f85149','Level 2':'#e3b341','Level 3':'#d29922','Level 4':'#58a6ff','Level 5':'#8b949e'};
 const SEV_LABEL = {'Level 1':'L1 — Critical','Level 2':'L2 — Major','Level 3':'L3 — Partial','Level 4':'L4 — Minor','Level 5':'L5 — Cosmetic'};
@@ -1135,5 +1183,747 @@ function renderNotablesFromData() {
   if (S.assessment && el('assessmentText')) el('assessmentText').value = S.assessment;
 }
 </script>
+<!-- KPI_DATA_START -->
+<script>
+window.KPI_DATA = {
+  "generated": "2026-05-21T16:54:20",
+  "quarter": "Q2 2026",
+  "currentRows": [
+    {
+      "key": "PROD-6331",
+      "status": "To Do",
+      "reporter": "Katherine Cassel",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "No",
+      "impact": "Yes",
+      "customer": "",
+      "resolution": "",
+      "created": 1779378209000,
+      "resolved": null,
+      "dueDate": 1781827200000
+    },
+    {
+      "key": "PROD-6330",
+      "status": "To Do",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1779299663000,
+      "resolved": null,
+      "dueDate": 1781740800000
+    },
+    {
+      "key": "PROD-6329",
+      "status": "To Do",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 5",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1779288622000,
+      "resolved": null,
+      "dueDate": 1786492800000
+    },
+    {
+      "key": "PROD-6327",
+      "status": "In Progress",
+      "reporter": "Fiona Nguyen",
+      "severity": "Level 5",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1779226197000,
+      "resolved": null,
+      "dueDate": 1786406400000
+    },
+    {
+      "key": "PROD-6326",
+      "status": "To Do",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1779225566000,
+      "resolved": null,
+      "dueDate": 1781654400000
+    },
+    {
+      "key": "PROD-6325",
+      "status": "To Do",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1779220872000,
+      "resolved": null,
+      "dueDate": 1781654400000
+    },
+    {
+      "key": "PROD-6324",
+      "status": "Reporter Review",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1779127390000,
+      "resolved": null,
+      "dueDate": 1781568000000
+    },
+    {
+      "key": "PROD-6322",
+      "status": "Reporter Review",
+      "reporter": "Fiona Nguyen",
+      "severity": "Level 5",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "Yes",
+      "customer": "",
+      "resolution": "",
+      "created": 1778789462000,
+      "resolved": null,
+      "dueDate": 1785974400000
+    },
+    {
+      "key": "PROD-6320",
+      "status": "Reporter Review",
+      "reporter": "Fiona Nguyen",
+      "severity": "Level 5",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778775856000,
+      "resolved": null,
+      "dueDate": 1785974400000
+    },
+    {
+      "key": "PROD-6319",
+      "status": "Closed",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778769934000,
+      "resolved": 1779162699000,
+      "dueDate": 1781222400000
+    },
+    {
+      "key": "PROD-6317",
+      "status": "To Do",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778760931000,
+      "resolved": null,
+      "dueDate": 1781222400000
+    },
+    {
+      "key": "PROD-6313",
+      "status": "Reporter Review",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778715854000,
+      "resolved": null,
+      "dueDate": 1781136000000
+    },
+    {
+      "key": "PROD-6311",
+      "status": "To Do",
+      "reporter": "Madhur Damle",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778701076000,
+      "resolved": null,
+      "dueDate": 1781136000000
+    },
+    {
+      "key": "PROD-6310",
+      "status": "To Do",
+      "reporter": "Madhur Damle",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778689504000,
+      "resolved": null,
+      "dueDate": 1781136000000
+    },
+    {
+      "key": "PROD-6307",
+      "status": "Closed",
+      "reporter": "Katherine Cassel",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778623745000,
+      "resolved": 1778685391000,
+      "dueDate": 1781049600000
+    },
+    {
+      "key": "PROD-6305",
+      "status": "To Do",
+      "reporter": "Katherine Cassel",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778603346000,
+      "resolved": null,
+      "dueDate": 1781049600000
+    },
+    {
+      "key": "PROD-6304",
+      "status": "Closed",
+      "reporter": "Ted Price",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778597725000,
+      "resolved": 1778783585000,
+      "dueDate": 1781049600000
+    },
+    {
+      "key": "PROD-6303",
+      "status": "In Progress",
+      "reporter": "Randy Weinstein",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "Yes",
+      "impact": "Yes",
+      "customer": "",
+      "resolution": "",
+      "created": 1778557983000,
+      "resolved": null,
+      "dueDate": 1781049600000
+    },
+    {
+      "key": "PROD-6302",
+      "status": "To Do",
+      "reporter": "Madhur Damle",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778529131000,
+      "resolved": null,
+      "dueDate": 1780963200000
+    },
+    {
+      "key": "PROD-6301",
+      "status": "To Do",
+      "reporter": "Madhur Damle",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778528242000,
+      "resolved": null,
+      "dueDate": 1780963200000
+    },
+    {
+      "key": "PROD-6300",
+      "status": "Closed",
+      "reporter": "Katherine Cassel",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778522202000,
+      "resolved": 1779302477000,
+      "dueDate": 1780963200000
+    },
+    {
+      "key": "PROD-6299",
+      "status": "Reporter Review",
+      "reporter": "Justin Riegsecker",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778518274000,
+      "resolved": null,
+      "dueDate": 1780963200000
+    },
+    {
+      "key": "PROD-6298",
+      "status": "Closed",
+      "reporter": "Katherine Cassel",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Not sure",
+      "impact": "Yes",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778270793000,
+      "resolved": 1778857919000,
+      "dueDate": 1780876800000
+    },
+    {
+      "key": "PROD-6297",
+      "status": "Reporter Review",
+      "reporter": "Calvin Yuen",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778257872000,
+      "resolved": null,
+      "dueDate": 1780876800000
+    },
+    {
+      "key": "PROD-6295",
+      "status": "To Do",
+      "reporter": "Calvin Yuen",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778221170000,
+      "resolved": null,
+      "dueDate": 1780876800000
+    },
+    {
+      "key": "PROD-6279",
+      "status": "Closed",
+      "reporter": "Abdul Samoon",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778188365000,
+      "resolved": 1778450546000,
+      "dueDate": 1780617600000
+    },
+    {
+      "key": "PROD-6276",
+      "status": "Reporter Review",
+      "reporter": "Fiona Nguyen",
+      "severity": "Level 5",
+      "product": "Basis Platform",
+      "isBug": "No",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778167683000,
+      "resolved": null,
+      "dueDate": 1785369600000
+    },
+    {
+      "key": "PROD-6275",
+      "status": "Closed",
+      "reporter": "Abdul Samoon",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "No",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1778116876000,
+      "resolved": 1779145233000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6274",
+      "status": "To Do",
+      "reporter": "Sandy Wang",
+      "severity": "Level 4",
+      "product": "DSP",
+      "isBug": "No",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778100940000,
+      "resolved": null,
+      "dueDate": 1780531200000
+    },
+    {
+      "key": "PROD-6273",
+      "status": "To Do",
+      "reporter": "Madhur Damle",
+      "severity": "Level 5",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1778004788000,
+      "resolved": null,
+      "dueDate": 1785196800000
+    },
+    {
+      "key": "PROD-6270",
+      "status": "To Do",
+      "reporter": "Nicholas Geniusz",
+      "severity": "Level 3",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1777924036000,
+      "resolved": null,
+      "dueDate": 1778284800000
+    },
+    {
+      "key": "PROD-6269",
+      "status": "To Do",
+      "reporter": "Madhur Damle",
+      "severity": "Level 4",
+      "product": "Basis Platform",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1777911848000,
+      "resolved": null,
+      "dueDate": null
+    }
+  ],
+  "prevRows": [
+    {
+      "key": "PROD-6246",
+      "status": "To Do",
+      "reporter": "Iryna Paradis",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1774282282000,
+      "resolved": null,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6245",
+      "status": "In Progress",
+      "reporter": "Chris Coupland",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1774299845000,
+      "resolved": null,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6244",
+      "status": "Closed",
+      "reporter": "Randy Weinstein",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1773919140000,
+      "resolved": 1778703419000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6243",
+      "status": "Closed",
+      "reporter": "Ted Price",
+      "severity": "Low",
+      "product": "",
+      "isBug": "No",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1773848842000,
+      "resolved": 1777036520000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6242",
+      "status": "Closed",
+      "reporter": "Abdul Samoon",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1773254878000,
+      "resolved": 1774218244000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6237",
+      "status": "In Progress",
+      "reporter": "Randy Weinstein",
+      "severity": "Low",
+      "product": "DSP",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1772283198000,
+      "resolved": null,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6234",
+      "status": "Closed",
+      "reporter": "Calvin Yuen",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1772135811000,
+      "resolved": 1773174133000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6227",
+      "status": "Closed",
+      "reporter": "Alejandro Drago",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1771938685000,
+      "resolved": 1773853124000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6226",
+      "status": "Closed",
+      "reporter": "Alejandro Drago",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1771938671000,
+      "resolved": 1773853116000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6225",
+      "status": "Closed",
+      "reporter": "Sandy Wang",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1771878915000,
+      "resolved": 1772035904000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6223",
+      "status": "Reporter Review",
+      "reporter": "Tyler Hoffman",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1771340289000,
+      "resolved": null,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6222",
+      "status": "To Do",
+      "reporter": "Abdul Samoon",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1770847611000,
+      "resolved": null,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6214",
+      "status": "Closed",
+      "reporter": "Madhur Damle",
+      "severity": "Low",
+      "product": "",
+      "isBug": "No",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1769725132000,
+      "resolved": 1769790121000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6213",
+      "status": "To Do",
+      "reporter": "Calvin Yuen",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "",
+      "created": 1769535286000,
+      "resolved": null,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6211",
+      "status": "Closed",
+      "reporter": "Mansoor Siddiqui",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1768846675000,
+      "resolved": 1777248765000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6210",
+      "status": "Closed",
+      "reporter": "Chris Coupland",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Not sure",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1768492434000,
+      "resolved": 1768495387000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6207",
+      "status": "Closed",
+      "reporter": "Ayse Pamuk",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "Done",
+      "created": 1768234303000,
+      "resolved": 1773847894000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6205",
+      "status": "Closed",
+      "reporter": "Madhur Damle",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "Done",
+      "created": 1767821289000,
+      "resolved": 1773847966000,
+      "dueDate": null
+    },
+    {
+      "key": "PROD-6204",
+      "status": "Closed",
+      "reporter": "Madhur Damle",
+      "severity": "Low",
+      "product": "",
+      "isBug": "Yes",
+      "impact": "",
+      "customer": "",
+      "resolution": "Fixed",
+      "created": 1767649252000,
+      "resolved": 1769534384000,
+      "dueDate": null
+    }
+  ],
+  "responseData": {
+    "rt_l4": 93.6,
+    "rp_l4": 50,
+    "rt_l5": 27.3,
+    "rp_l5": 75
+  },
+  "mttdData": {
+    "md_l4": 93.6,
+    "md_l5": 27.3
+  },
+  "notables": [],
+  "assessment": "Q2 2026: 32 PROD issues (\u219113 from prior quarter). 25 remain open. Resolution SLA compliance: 100%. 4 customer-impacting issues.",
+  "uptimeHours": 1183,
+  "uptimeDown": 0.0,
+  "jiraUrl": "https://basis.atlassian.net",
+  "jqlCur": "project = PROD AND issuetype = \"PROD ISSUE\" AND created >= \"2026-05-04\" AND created <= \"2026-06-30\""
+};
+</script>
+<!-- KPI_DATA_END -->
 </body>
 </html>

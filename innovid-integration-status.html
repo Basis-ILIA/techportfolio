@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Innovid Ad Server Integration · Basis Tech Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<script src="menu.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+
+<!-- In-page tabs -->
+<div class="page-tabs">
+  <button class="active" data-tab="overview">Overview</button>
+  <button data-tab="timeline">Timeline</button>
+  <button data-tab="decisions">Decisions &amp; Escalation</button>
+  <button data-tab="actions">Actions</button>
+  <div class="page-tabs-spacer"></div>
+  <div class="page-tabs-meta">
+    <span class="sync-dot"></span>
+    Updated May 26, 2026
+  </div>
+</div>
+
+<div class="subbar">
+  <span><strong>3</strong> Blockers</span>
+  <span><strong>Sep 1</strong> Eng. target</span>
+  <span><strong>Nov 1</strong> MCA go-live</span>
+  <div class="subbar-right">Week of 05/26/2026 &nbsp;·&nbsp; Owner: Jon Iturralde &nbsp;·&nbsp; PM: Muzzammil Singdi</div>
+</div>
+
+<div class="page page-narrow">
+
+  <!-- ════════ OVERVIEW ════════ -->
+  <div class="tab-panel active" id="tab-overview">
+
+    <h1>Innovid Ad Server Integration</h1>
+    <p class="page-sub">Integration between Basis and the Innovid ad server enabling campaign and placement sync, delivery data, and reporting. Week of May 26, 2026.</p>
+
+    <div class="kpi-row">
+      <div class="kpi-cell">
+        <div class="kpi-label">Overall Status</div>
+        <div class="kpi-value" style="font-size:16px;padding-top:3px"><span class="badge red">At Risk</span></div>
+        <div class="kpi-sub" style="margin-top:6px">Field gap validation + auth still outstanding</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Eng. Complete</div>
+        <div class="kpi-value amber">Sep 1</div>
+        <div class="kpi-sub">Low confidence; assumes near-ideal execution</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">MCA Go-Live</div>
+        <div class="kpi-value">Nov 1</div>
+        <div class="kpi-sub">MCA onboarding Sep–Oct</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Sample Files</div>
+        <div class="kpi-value green">13 / 13</div>
+        <div class="kpi-sub">Received; corrections still pending from Innovid</div>
+      </div>
+      <div class="kpi-cell">
+        <div class="kpi-label">Innovid Commitment</div>
+        <div class="kpi-value amber">Jun 1</div>
+        <div class="kpi-sub">Validated reporting package; verbal only</div>
+      </div>
+    </div>
+
+    <div class="section-heading">Goal</div>
+    <div class="card">
+      <div class="card-title">Full Ad Server Integration — Campaign, Placement, and Delivery Data</div>
+      <p>Integrate Basis with the Innovid ad server to enable programmatic synchronization of campaign and placement data and delivery reporting at CM360 parity. The initial first customer is MCA (Boundless). Engineering completion target is September 1, 2026; MCA go-live target is November 1, 2026.</p>
+    </div>
+
+    <div class="section-heading">Blockers</div>
+
+    <div class="callout red">
+      <div class="callout-label">Blocker 1 — Field Gap Validation Not Complete</div>
+      Innovid has not validated that field gaps identified in entity and delivery report samples are fully resolved. Owner: Innovid. Committed deadline: June 1. If unmet, Basis will escalate to Mediaocean leadership — this is the gating item for the September 1 engineering target.
+    </div>
+
+    <div class="callout red">
+      <div class="callout-label">Blocker 2 — Delivery Report / Error Log Format Not Delivered</div>
+      Innovid did not deliver the Delivery Report / Error Log format, which was committed for delivery in the week of May 19. Owner: Innovid. New ETA: June 1.
+    </div>
+
+    <div class="callout red">
+      <div class="callout-label">Blocker 3 — Token Revocation Endpoint In Progress at Innovid</div>
+      Token revocation endpoint remains in progress at Innovid. Owner: Innovid. Needed by June 15, ahead of Bluetiful's auth implementation completion.
+    </div>
+
+    <hr>
+
+    <div class="section-heading">Architecture Context</div>
+
+    <div class="callout amber">
+      <div class="callout-label">File-Based Delivery Pivot</div>
+      The original reporting path ran through Improvado, contracted to connect Basis to Innovid's Reporting API. By March 20, Basis had identified that the Reporting API lacked the CM360 parity fields required. Deeper investigation surfaced additional gaps — incomplete entity coverage and missing metrics — raised on April 14. At that point Innovid confirmed no additional API changes would be made and shifted to investigating file-based delivery. Sample files were not received until May 14, nearly two months after gaps were first raised. File-based delivery is now the confirmed working path, but Innovid has not yet provided final confirmation that all required fields will be available in the output.
+    </div>
+
+    <div class="callout amber">
+      <div class="callout-label">Authentication — Static-Token Workaround</div>
+      Innovid confirmed OAuth is out of scope and would require work on their side. This placed approximately four weeks of additional engineering on Basis to build a static-token workaround. The authentication endpoint was not delivered until April 24. Authentication questions remain open and could introduce further delays.
+    </div>
+
+    <div class="callout gray">
+      <div class="callout-label">Basis Position on Disputed Points</div>
+      Innovid's formal response to Basis's delivery gaps report attributed the file-based pivot to Basis's late engagement of its Data Engineering team, disputed that API limitations caused delays, and framed bulk access gaps as an "enhancement" rather than a missing capability. Basis's position stands: CM360 parity requirements were stated since project inception in February; the file-based pivot reflects Innovid's incomplete API capabilities, not a Basis scope change. A consolidated request-by-request log (all asks, dates, resolution status) is being prepared by PMO for Tim Smith's escalation call.
+    </div>
+
+    <hr>
+
+    <div class="section-heading">Escalation</div>
+    <div class="callout red">
+      <div class="callout-label">Escalation Call with Innovid Leadership — Scheduled</div>
+      A call with Innovid leadership is scheduled for the week of May 26 (Friday May 29). Purpose: bring Innovid leadership up to speed on continued delays, impact on Basis's timeline, and the need for greater urgency. Key points: engineering team responsiveness, absence coverage gaps, and the pattern of slow turnarounds relative to Basis's same-day feedback cadence. This is part of preparation for a commercial renegotiation conversation with Mediaocean leadership.
+    </div>
+
+    <hr>
+
+    <div class="section-heading">Confidence Note</div>
+    <div class="card">
+      <p>Timeline confidence is <strong>low</strong>. The September 1 engineering target and November 1 MCA go-live assume near-ideal execution with no bugs or back-and-forth delays — a condition that has not characterized this engagement to date. Innovid's key engineering lead was absent from the May 21 call with no delegate stepping in. Mediaocean leadership attendance on biweekly check-ins has declined since Ramsey's departure. Both sides are experiencing frustration; the goal of the escalation call is to get fact-based and move forward constructively.</p>
+    </div>
+
+  </div>
+
+  <!-- ════════ TIMELINE ════════ -->
+  <div class="tab-panel" id="tab-timeline">
+
+    <h1>Timeline</h1>
+    <p class="page-sub">Engineering complete Sep 1 · MCA go-live Nov 1. Confidence: low.</p>
+
+    <div class="timeline">
+      <div class="tl-item done">
+        <div class="tl-date">February 2026</div>
+        <div class="tl-title">Project inception — CM360 parity requirements stated</div>
+        <div class="tl-desc">Basis's CM360 parity requirement established as the scope baseline from the start of the engagement.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">March 20, 2026</div>
+        <div class="tl-title">Reporting API gaps identified</div>
+        <div class="tl-desc">Basis identified that the Innovid Reporting API lacked CM360 parity fields required. Improvado was originally contracted to bridge this connection.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">March 25, 2026</div>
+        <div class="tl-title">Innovid API readiness workstream begins</div>
+        <div class="tl-desc">Parallel track covering auth, entity API, and file-based delivery.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">April 14, 2026</div>
+        <div class="tl-title">Deeper API gaps raised — incomplete entity coverage, missing metrics</div>
+        <div class="tl-desc">Basis Data team surfaced additional gaps. Innovid confirmed no additional API changes and pivoted to investigating file-based delivery.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">April 15, 2026</div>
+        <div class="tl-title">Campaign &amp; Placement integration begins</div>
+        <div class="tl-desc">Dev targeting end of June; QA complete July 7.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">April 15 – May 6, 2026</div>
+        <div class="tl-title">Improvado integration — complete, de-scoped from Phase 1</div>
+        <div class="tl-desc">Complete. De-scoped from Phase 1 pending confirmation that file-based delivery is sufficient.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">April 24, 2026</div>
+        <div class="tl-title">Authentication endpoint delivered by Innovid</div>
+        <div class="tl-desc">Delivered approximately four weeks after it was needed, requiring Basis to build a static-token workaround in the interim. Auth questions remain open.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">May 13, 2026</div>
+        <div class="tl-title">File-based delivery architecture confirmed</div>
+        <div class="tl-desc">All 13 sample files received May 13–14 (11 entity, 2 delivery). Data &amp; Reporting integration workstream begins.</div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-date">Week of May 19, 2026</div>
+        <div class="tl-title">Basis submits formal delivery gaps report to Innovid</div>
+        <div class="tl-desc">Documented outstanding field gaps and delays. Innovid provided formal response disputing several points. Basis's position stands.</div>
+      </div>
+      <div class="tl-item risk">
+        <div class="tl-date">June 1, 2026</div>
+        <div class="tl-title">Innovid committed: validated reporting package due</div>
+        <div class="tl-desc">Verbal commitment only — written confirmation outstanding. Field gap validation, revised sample files, and Delivery Report / Error Log format all due. If unmet, Basis escalates to Mediaocean leadership.</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">May 29, 2026</div>
+        <div class="tl-title">Escalation call with Innovid leadership</div>
+        <div class="tl-desc">Tim Smith leading. Part of preparation for commercial renegotiation conversation with Mediaocean leadership. TPMO to have consolidated delay log ready.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">June 15, 2026</div>
+        <div class="tl-title">Token revocation endpoint needed from Innovid</div>
+        <div class="tl-desc">Required ahead of Bluetiful's auth implementation completion.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">July 7, 2026</div>
+        <div class="tl-title">Campaign &amp; Placement integration QA complete</div>
+        <div class="tl-desc">Dev targeting end of June; QA complete July 7.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">May 29, 2026</div>
+        <div class="tl-title">MCA onboarding task list due (Andrew)</div>
+        <div class="tl-desc">Following May 15 scoping session with Boundless leadership. Needed to map MCA onboarding dependencies into the September timeline.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">August 28, 2026</div>
+        <div class="tl-title">Data &amp; Reporting integration complete (target)</div>
+        <div class="tl-desc">Architecture confirmed May 13; all 13 samples received May 14. Gated on Innovid field gap validation and delivery report format.</div>
+      </div>
+      <div class="tl-item risk">
+        <div class="tl-date">September 1, 2026</div>
+        <div class="tl-title">Engineering complete target</div>
+        <div class="tl-desc">Low confidence. Assumes near-ideal execution. MCA onboarding preparation begins Sep 1 – Oct 31.</div>
+      </div>
+      <div class="tl-item upcoming">
+        <div class="tl-date">November 1, 2026</div>
+        <div class="tl-title">MCA go-live target</div>
+        <div class="tl-desc">MCA onboarding Sep–Oct; live November 1. Dependent on September engineering target being met.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ DECISIONS & ESCALATION ════════ -->
+  <div class="tab-panel" id="tab-decisions">
+
+    <h1>Decisions &amp; Escalation Log</h1>
+    <p class="page-sub">Key decisions and position statements. Most recent first.</p>
+
+    <div class="decision-list-wrap">
+      <div class="decision-item">
+        <div class="decision-date">May 26, 2026</div>
+        <div class="decision-text"><strong>Basis formal position on delivery gaps report confirmed</strong> — CM360 parity requirements were stated since project inception in February. The file-based pivot reflects Innovid's incomplete API capabilities, not a Basis scope change. Basis disputes Innovid's response attributing the pivot to Basis's late engagement of its Data Engineering team.</div>
+        <span class="badge red">Disputed</span>
+      </div>
+      <div class="decision-item">
+        <div class="decision-date">May 26, 2026</div>
+        <div class="decision-text"><strong>Escalation call with Innovid leadership scheduled for May 29</strong> — Tim Smith leading. TPMO preparing consolidated request-by-request delay log for context. Part of preparation for commercial renegotiation with Mediaocean leadership.</div>
+        <span class="badge amber">Escalating</span>
+      </div>
+      <div class="decision-item">
+        <div class="decision-date">May 22, 2026</div>
+        <div class="decision-text"><strong>June 1 as deadline for Innovid validated reporting package</strong> — Verbal commitment received from Innovid on the May 21 call to deliver everything by June 1. Written confirmation still outstanding. If unmet, Basis escalates to Mediaocean leadership.</div>
+        <span class="badge amber">Verbal Only</span>
+      </div>
+      <div class="decision-item">
+        <div class="decision-date">May 13, 2026</div>
+        <div class="decision-text"><strong>File-based delivery confirmed as working architecture</strong> — Replaces Reporting API path. All 13 sample files received May 13–14. Improvado de-scoped from Phase 1 pending confirmation that file-based delivery is sufficient.</div>
+        <span class="badge green">Confirmed</span>
+      </div>
+      <div class="decision-item">
+        <div class="decision-date">April 14, 2026</div>
+        <div class="decision-text"><strong>Innovid confirmed no additional API changes</strong> — Following Basis raising deeper gaps (incomplete entity coverage, missing metrics). Pivot to file-based delivery investigation began at this point.</div>
+        <span class="badge gray">Noted</span>
+      </div>
+      <div class="decision-item">
+        <div class="decision-date">April 2026</div>
+        <div class="decision-text"><strong>Static-token workaround required due to OAuth being out of scope at Innovid</strong> — Innovid confirmed OAuth requires work on their side. Approximately four additional weeks of Basis engineering required to build workaround. Auth endpoint not delivered until April 24.</div>
+        <span class="badge red">Unplanned Work</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════ ACTIONS ════════ -->
+  <div class="tab-panel" id="tab-actions">
+
+    <h1>Open Actions</h1>
+    <p class="page-sub">Current open items as of May 26, 2026.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width:160px">Owner</th>
+          <th>Action</th>
+          <th style="width:80px">Priority</th>
+          <th style="width:110px">Due</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="owner-cell">Innovid</td>
+          <td>Deliver validated reporting package: revised sample files with all field gap corrections resolved across all 13 files, plus Delivery Report / Error Log format. Written confirmation required — verbal commitment received on May 21.</td>
+          <td><span class="badge red">Critical</span></td>
+          <td class="date-cell">June 1, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Innovid</td>
+          <td>Deliver token revocation endpoint. Needed by June 15 ahead of Bluetiful's auth implementation completion.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">June 15, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Muzzammil Singdi (PMO)</td>
+          <td>Finalize and share consolidated request-by-request log: every ask made to Innovid with date requested, date delivered (or not), and resolution status. Due ahead of Tim's escalation call May 29.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">May 26 EOD</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Tim Smith</td>
+          <td>Lead escalation call with Innovid leadership. Key points: engineering team responsiveness, absence coverage gaps, pattern of slow turnarounds vs. Basis same-day feedback cadence. Also raise Mediaocean leadership attendance decline on biweekly check-ins.</td>
+          <td><span class="badge red">High</span></td>
+          <td class="date-cell">May 29, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Andrew (MCA)</td>
+          <td>Deliver MCA onboarding task list following May 15 scoping session with Boundless leadership. Needed to map MCA onboarding dependencies into the September timeline.</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">May 29, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Jon Iturralde</td>
+          <td>Campaign &amp; Placement integration: target Dev complete end of June, QA complete July 7.</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">July 7, 2026</td>
+        </tr>
+        <tr>
+          <td class="owner-cell">Jon Iturralde</td>
+          <td>Data &amp; Reporting integration: unblock pipeline and table design work once revised sample files received from Innovid. Target engineering completion August 28.</td>
+          <td><span class="badge amber">Med</span></td>
+          <td class="date-cell">Aug 28, 2026</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <div class="section-heading">Key Contacts</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="card">
+        <div class="card-title">Basis</div>
+        <p>Jon Iturralde (Product Owner)<br>
+        Muzzammil Singdi (Program Manager)<br>
+        Tim Smith (Executive Sponsor)<br>
+        Ilia Fonariov (Program Lead, Mediaocean)</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Innovid / Mediaocean</div>
+        <p>Innovid engineering lead (name TBD)<br>
+        Mediaocean leadership (post-Ramsey departure)<br>
+        Boundless / MCA leadership (first customer)</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  BasisPortfolio.init('innovid', { context: '<strong>Mediaocean</strong> · Innovid Ad Server' });
+
+  document.querySelectorAll('.page-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.page-tabs button').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const panel = document.getElementById('tab-' + btn.dataset.tab);
+      if (panel) panel.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  });
+</script>
+
+</body>
+</html>
