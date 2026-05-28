@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   {
     id: 'roadmap',
     label: 'Technology Roadmap',
-    href: 'tech_roadmap.html',
+    href: 'tech-roadmap.html',
     section: 'Roadmap',
     status: 'active',
   },
