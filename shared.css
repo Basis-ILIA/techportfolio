@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Basis Tech Portfolio — Shared Styles (v2)
+   Basis Tech Portfolio -- Shared Styles (v2)
    Sidebar nav · Light + Dark · Static footer
    ═══════════════════════════════════════════════════════════════ */
 
@@ -118,7 +118,7 @@ a { color: var(--accent); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 /* ═══════════════════════════════════════════════════════════════
-   LAYOUT — Sidebar + Topbar + Content + Footer
+   LAYOUT -- Sidebar + Topbar + Content + Footer
    ═══════════════════════════════════════════════════════════════ */
 .layout {
   display: grid;
@@ -221,7 +221,8 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 20px 14px;
+  padding: 0 20px;
+  height: 52px;
   text-decoration: none;
   color: var(--text);
   border-bottom: 1px solid var(--border);

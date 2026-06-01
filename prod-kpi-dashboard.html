@@ -12,7 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
-/* Dashboard-specific tokens — adapt to portfolio's light/dark theme */
+/* Dashboard-specific tokens -- adapt to portfolio's light/dark theme */
 [data-theme="dark"],
 :root {
   --d-bg:#0d1117;--d-surface:#161b22;--d-surface2:#21262d;
@@ -230,7 +230,7 @@ tbody tr:hover td{background:var(--surface2)}
         </div>
       </div>
       <div>
-        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Prior Quarter <span style="font-weight:400;text-transform:none">(optional — enables QoQ comparison)</span></div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Prior Quarter <span style="font-weight:400;text-transform:none">(optional -- enables QoQ comparison)</span></div>
         <div class="drop-zone" id="dzPrev"
           ondragover="dzOver(event)" ondragleave="dzLeave(event)" ondrop="dzDrop(event,'prev')"
           onclick="document.getElementById('filePrev').click()">
@@ -263,22 +263,22 @@ tbody tr:hover td{background:var(--surface2)}
   <div class="summary-grid">
     <div class="kpi-card">
       <div class="kpi-label">Total Incidents</div>
-      <div class="kpi-value" id="cTotal" style="color:var(--text)">—</div>
+      <div class="kpi-value" id="cTotal" style="color:var(--text)">--</div>
       <div class="kpi-sub" id="cTotalSub">Import CSV to populate</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Open Issues</div>
-      <div class="kpi-value" id="cOpen" style="color:var(--yellow)">—</div>
+      <div class="kpi-value" id="cOpen" style="color:var(--yellow)">--</div>
       <div class="kpi-sub" id="cOpenSub">Unresolved this quarter</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Resolution SLA Compliance</div>
-      <div class="kpi-value" id="cSLA" style="color:var(--green)">—</div>
+      <div class="kpi-value" id="cSLA" style="color:var(--green)">--</div>
       <div class="kpi-sub" id="cSLASub">Resolved on or before due date</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Customer Impacting</div>
-      <div class="kpi-value" id="cCust" style="color:var(--accent)">—</div>
+      <div class="kpi-value" id="cCust" style="color:var(--accent)">--</div>
       <div class="kpi-sub" id="cCustSub">Impact Accounts = Yes</div>
     </div>
   </div>
@@ -312,7 +312,7 @@ tbody tr:hover td{background:var(--surface2)}
   <!-- ── 2. SLA Compliance ── -->
   <div class="sec">
     <div class="sec-head">
-      <div class="sec-title">2 · SLA Compliance — Resolution</div>
+      <div class="sec-title">2 · SLA Compliance -- Resolution</div>
       <a class="sec-jira-link" id="jiraLink2" href="#" target="_blank" style="display:none">View in Jira ↗</a>
       <span class="sec-badge">Auto · CSV</span>
     </div>
@@ -368,7 +368,7 @@ tbody tr:hover td{background:var(--surface2)}
       <span class="sec-badge">Manual · Enter Below</span>
     </div>
     <div class="sec-body">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Proxy metric: average time from ticket creation to first team acknowledgment. True MTTD (from incident start) isn't captured in Jira — <code style="font-size:11px">created</code> timestamp serves as the detection proxy. Automatically calculated from the Jira changelog API.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Proxy metric: average time from ticket creation to first team acknowledgment. True MTTD (from incident start) isn't captured in Jira -- <code style="font-size:11px">created</code> timestamp serves as the detection proxy. Automatically calculated from the Jira changelog API.</p>
       <table>
         <thead><tr>
           <th>Severity</th>
@@ -430,7 +430,7 @@ tbody tr:hover td{background:var(--surface2)}
       <span class="sec-badge">Manual</span>
     </div>
     <div class="sec-body">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Basis guarantees <strong>99.5% platform availability</strong> per calendar quarter (8 AM – 9 PM ET, Mon–Sun, excluding scheduled maintenance and force majeure). Track L1/L2 downtime against this SLA.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Basis guarantees <strong>99.5% platform availability</strong> per calendar quarter (8 AM - 9 PM ET, Mon-Sun, excluding scheduled maintenance and force majeure). Track L1/L2 downtime against this SLA.</p>
       <div class="uptime-grid" id="uptimeManual">
         <div class="input-field"><label>Total Covered Hours</label><input type="number" id="ut_hours" placeholder="e.g. 1170" min="0" oninput="calcUptime()"></div>
         <div class="input-field"><label>Hours of Downtime</label><input type="number" id="ut_down" placeholder="e.g. 2.5" min="0" step="0.1" oninput="calcUptime()"></div>
@@ -453,7 +453,7 @@ tbody tr:hover td{background:var(--surface2)}
 
 <script>
 // ═══════════════════════════════════════════════════════
-//  Portfolio shell — wraps the dashboard with sidebar+topbar+footer
+//  Portfolio shell -- wraps the dashboard with sidebar+topbar+footer
 //  Must run before DOMContentLoaded so dashboard's logic can find its elements
 // ═══════════════════════════════════════════════════════
 BasisPortfolio.init('prod-kpi', { context: '<strong>Dashboards</strong> · Production KPIs' });
@@ -469,10 +469,10 @@ window.addEventListener('themechange', () => {
 <script>
 const SEVS = ['Level 1','Level 2','Level 3','Level 4','Level 5'];
 const SEV_COLOR = {'Level 1':'#f85149','Level 2':'#e3b341','Level 3':'#d29922','Level 4':'#58a6ff','Level 5':'#8b949e'};
-const SEV_LABEL = {'Level 1':'L1 — Critical','Level 2':'L2 — Major','Level 3':'L3 — Partial','Level 4':'L4 — Minor','Level 5':'L5 — Cosmetic'};
+const SEV_LABEL = {'Level 1':'L1 -- Critical','Level 2':'L2 -- Major','Level 3':'L3 -- Partial','Level 4':'L4 -- Minor','Level 5':'L5 -- Cosmetic'};
 const SEV_CHIP  = {'Level 1':'chip chip-l1','Level 2':'chip chip-l2','Level 3':'chip chip-l3','Level 4':'chip chip-l4','Level 5':'chip chip-l5'};
 const RT_SLA    = {'Level 1':'15 min','Level 2':'30 min','Level 3':'1 hour','Level 4':'2 days','Level 5':'4 days'};
-const RES_SLA   = {'Level 1':'ASAP','Level 2':'ASAP','Level 3':'5 biz days','Level 4':'2–3 weeks','Level 5':'1–2 months'};
+const RES_SLA   = {'Level 1':'ASAP','Level 2':'ASAP','Level 3':'5 biz days','Level 4':'2-3 weeks','Level 5':'1-2 months'};
 const STORAGE_KEY = 'prodKpi_v2';
 
 // ═══════════════════════════════════════════════════════
@@ -486,7 +486,7 @@ let S = {
   prevM: null,
   responseData: {},
   mttdData: {},
-  notables: [{key:'',sev:'—',sum:'',res:'',sla:'—'},{key:'',sev:'—',sum:'',res:'',sla:'—'},{key:'',sev:'—',sum:'',res:'',sla:'—'}],
+  notables: [{key:'',sev:'--',sum:'',res:'',sla:'--'},{key:'',sev:'--',sum:'',res:'',sla:'--'},{key:'',sev:'--',sum:'',res:'',sla:'--'}],
   assessment: '',
   uptimeHours: '',
   uptimeDown: '',
@@ -558,17 +558,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('#uptimeConfirm, .save-btn').forEach(e => e.style.display = 'none');
     const h = parseFloat(S.uptimeHours) || 0;
     const d = parseFloat(S.uptimeDown)  || 0;
-    const pct = h > 0 ? ((h - d) / h * 100).toFixed(3) : '—';
+    const pct = h > 0 ? ((h - d) / h * 100).toFixed(3) : '--';
     const met = h > 0 && parseFloat(pct) >= 99.5;
     const slaColor = h > 0 ? (met ? 'var(--green)' : 'var(--red)') : 'var(--muted)';
     el('uptimeAutoDisplay').style.display = 'grid';
     el('uptimeAutoDisplay').style.gridTemplateColumns = 'repeat(4,1fr)';
     el('uptimeAutoDisplay').style.gap = '10px';
     el('uptimeAutoDisplay').innerHTML = [
-      ['Total Covered Hours', h || '—', 'var(--text)'],
+      ['Total Covered Hours', h || '--', 'var(--text)'],
       ['Hours of Downtime',   d || '0', d > 0 ? 'var(--yellow)' : 'var(--green)'],
-      ['Availability',        h > 0 ? pct + '%' : '—', slaColor],
-      ['SLA Met?',            h > 0 ? (met ? '✓ Yes' : '✗ No') : '—', slaColor],
+      ['Availability',        h > 0 ? pct + '%' : '--', slaColor],
+      ['SLA Met?',            h > 0 ? (met ? '✓ Yes' : '✗ No') : '--', slaColor],
     ].map(([label, val, color]) =>
       `<div class="kpi-card" style="padding:14px 16px">
         <div class="kpi-label">${label}</div>
@@ -874,24 +874,24 @@ function renderFreqSection(m, p) {
     const cur = m.bySev[s].total, prev = pb ? pb[s].total : null;
     const delta = prev !== null ? cur - prev : null;
     const dStr = delta !== null
-      ? (delta > 0 ? `<span class="bad">+${delta}</span>` : delta < 0 ? `<span class="ok">${delta}</span>` : `<span style="color:var(--muted)">—</span>`)
-      : '—';
+      ? (delta > 0 ? `<span class="bad">+${delta}</span>` : delta < 0 ? `<span class="ok">${delta}</span>` : `<span style="color:var(--muted)">--</span>`)
+      : '--';
     const sevChip = `<span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span>`;
     const sevCell = window.KPI_DATA
       ? `<a href="${buildJiraUrl(window.KPI_DATA.jqlCur + ' AND Severity = "' + s + '"')}" target="_blank" style="text-decoration:none">${sevChip}</a>`
       : sevChip;
     return `<tr><td>${sevCell}</td>
-      <td class="num">${cur}</td><td class="num">${prev??'—'}</td>
+      <td class="num">${cur}</td><td class="num">${prev??'--'}</td>
       <td class="num">${dStr}</td><td class="num">${m.bySev[s].open}</td><td class="num">${m.bySev[s].resolved}</td></tr>`;
   });
   const td = p ? m.total - p.total : null;
   rows.push(`<tr class="tr-total"><td><strong>Total</strong></td>
-    <td class="num">${m.total}</td><td class="num">${p?p.total:'—'}</td>
-    <td class="num">${td!==null?(td>0?`<span class="bad">+${td}</span>`:`<span class="ok">${td}</span>`):'—'}</td>
+    <td class="num">${m.total}</td><td class="num">${p?p.total:'--'}</td>
+    <td class="num">${td!==null?(td>0?`<span class="bad">+${td}</span>`:`<span class="ok">${td}</span>`):'--'}</td>
     <td class="num">${m.open}</td><td class="num">${m.resolved}</td></tr>`);
 
   const byProd = Object.entries(m.byProduct).sort((a,b)=>b[1]-a[1])
-    .map(([k,v]) => `<tr><td>${k||'—'}</td><td class="num">${v}</td></tr>`).join('');
+    .map(([k,v]) => `<tr><td>${k||'--'}</td><td class="num">${v}</td></tr>`).join('');
   const byBug = `<tr><td>Confirmed bug</td><td class="num">${m.byBug.Yes}</td></tr>
     <tr><td>Not a bug</td><td class="num">${m.byBug.No}</td></tr>
     <tr><td>Not sure</td><td class="num">${m.byBug['Not sure']}</td></tr>`;
@@ -920,16 +920,16 @@ function renderSLASection(m) {
     return `<tr><td><span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span></td>
       <td>${RES_SLA[s]}</td><td class="num">${sb.resolved}</td><td class="num">${sb.slaOk}</td>
       <td class="num">${pStr}</td><td class="num">${sb.slaBad}</td>
-      <td class="num">${sb.avgDays !== null ? sb.avgDays+'d' : '—'}</td></tr>`;
+      <td class="num">${sb.avgDays !== null ? sb.avgDays+'d' : '--'}</td></tr>`;
   });
   const overallPct = m.slaPct !== null
     ? `<span class="${m.slaPct>=90?'ok':m.slaPct>=70?'warn':'bad'}">${m.slaPct}%</span>` : '<span style="color:var(--muted)">N/A</span>';
-  rows.push(`<tr class="tr-total"><td><strong>Overall</strong></td><td>—</td>
+  rows.push(`<tr class="tr-total"><td><strong>Overall</strong></td><td>--</td>
     <td class="num">${m.resolved}</td><td class="num">${m.slaOk}</td>
-    <td class="num">${overallPct}</td><td class="num">${m.slaBad}</td><td class="num">—</td></tr>`);
+    <td class="num">${overallPct}</td><td class="num">${m.slaBad}</td><td class="num">--</td></tr>`);
 
   const warn = m.slaNoDate > 0
-    ? `<div class="warn-banner">⚠ ${m.slaNoDate} resolved issue${m.slaNoDate!==1?'s':''} had no due date and are excluded from SLA %. Set due dates per severity SLA to improve accuracy — or use a Jira Automation rule to auto-set them.</div>` : '';
+    ? `<div class="warn-banner">⚠ ${m.slaNoDate} resolved issue${m.slaNoDate!==1?'s':''} had no due date and are excluded from SLA %. Set due dates per severity SLA to improve accuracy -- or use a Jira Automation rule to auto-set them.</div>` : '';
 
   el('slaSection').innerHTML = `
     <table><thead><tr>
@@ -945,7 +945,7 @@ function renderReporterSection(m) {
   if (!sorted.length) { el('reporterSection').innerHTML = '<div class="empty"><div class="empty-icon">👤</div><p>No reporter data available</p></div>'; return; }
   const sevCols = SEVS.filter(s => sorted.some(([,r]) => r.bySev[s]));
   const rows = sorted.map(([name, r]) => {
-    const sevCells = sevCols.map(s => `<td class="num">${r.bySev[s]||'—'}</td>`).join('');
+    const sevCells = sevCols.map(s => `<td class="num">${r.bySev[s]||'--'}</td>`).join('');
     return `<tr><td style="font-size:13px">${escHtml(name)}</td>
       <td class="num"><strong>${r.total}</strong></td>
       <td class="num">${r.open}</td>
@@ -979,11 +979,11 @@ function renderResponseTable() {
   const rows = SEVS.map((s, i) => {
     const k = `l${i+1}`;
     const isMin = i < 3;
-    const avg = rd[`rt_${k}`] ? rd[`rt_${k}`] + (isMin ? ' min' : ' hrs') : '—';
+    const avg = rd[`rt_${k}`] ? rd[`rt_${k}`] + (isMin ? ' min' : ' hrs') : '--';
     const pct = rd[`rp_${k}`];
-    const pStr = pct !== undefined ? `<span class="${pct>=90?'ok':pct>=70?'warn':'bad'}">${pct}%</span>` : '—';
+    const pStr = pct !== undefined ? `<span class="${pct>=90?'ok':pct>=70?'warn':'bad'}">${pct}%</span>` : '--';
     const status = pct !== undefined
-      ? (pct>=90?'<span class="ok">✓ On Track</span>':pct>=70?'<span class="warn">⚠ At Risk</span>':'<span class="bad">✗ Breached</span>') : '—';
+      ? (pct>=90?'<span class="ok">✓ On Track</span>':pct>=70?'<span class="warn">⚠ At Risk</span>':'<span class="bad">✗ Breached</span>') : '--';
     return `<tr><td><span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span></td>
       <td>${RT_SLA[s]}</td><td class="num">${avg}</td><td class="num">${pStr}</td><td class="num">${status}</td></tr>`;
   });
@@ -999,9 +999,9 @@ function renderMTTDTable() {
     const cur = md[`md_${k}`], prev = md[`mp_${k}`];
     const unit = isMin ? 'min' : 'hrs';
     const trend = (cur && prev)
-      ? (parseFloat(cur)<parseFloat(prev)?'<span class="ok">↓ Improved</span>':parseFloat(cur)>parseFloat(prev)?'<span class="bad">↑ Worse</span>':'<span style="color:var(--muted)">→ Flat</span>') : '—';
+      ? (parseFloat(cur)<parseFloat(prev)?'<span class="ok">↓ Improved</span>':parseFloat(cur)>parseFloat(prev)?'<span class="bad">↑ Worse</span>':'<span style="color:var(--muted)">→ Flat</span>') : '--';
     return `<tr><td><span class="${SEV_CHIP[s]}">${SEV_LABEL[s]}</span></td>
-      <td class="num">${cur?cur+' '+unit:'—'}</td><td class="num">${prev?prev+' '+unit:'—'}</td><td>${trend}</td></tr>`;
+      <td class="num">${cur?cur+' '+unit:'--'}</td><td class="num">${prev?prev+' '+unit:'--'}</td><td>${trend}</td></tr>`;
   });
   el('mttdBody').innerHTML = rows.join('');
 }
@@ -1067,7 +1067,7 @@ function calcUptime() {
     const met = parseFloat(pct) >= 99.5;
     el('ut_pct').value = pct + '%';
     el('ut_pct').style.color = met ? 'var(--green)' : 'var(--red)';
-    el('ut_met').value = met ? '✓ Yes — SLA Met' : '✗ No — SLA Missed';
+    el('ut_met').value = met ? '✓ Yes -- SLA Met' : '✗ No -- SLA Missed';
     el('ut_met').style.color = met ? 'var(--green)' : 'var(--red)';
   }
 }
@@ -1086,10 +1086,10 @@ function loadManualInputs() {
   if (S.notables) {
     S.notables.forEach((n, i) => {
       if (el(`ni_key_${i}`)) el(`ni_key_${i}`).value = n.key || '';
-      if (el(`ni_sev_${i}`)) el(`ni_sev_${i}`).value = n.sev || '—';
+      if (el(`ni_sev_${i}`)) el(`ni_sev_${i}`).value = n.sev || '--';
       if (el(`ni_sum_${i}`)) el(`ni_sum_${i}`).value = n.sum || '';
       if (el(`ni_res_${i}`)) el(`ni_res_${i}`).value = n.res || '';
-      if (el(`ni_sla_${i}`)) el(`ni_sla_${i}`).value = n.sla || '—';
+      if (el(`ni_sla_${i}`)) el(`ni_sla_${i}`).value = n.sla || '--';
     });
   }
   if (S.uptimeHours) el('ut_hours').value = S.uptimeHours;
@@ -1102,7 +1102,7 @@ function loadManualInputs() {
 function saveState() {
   try {
     const toStore = { ...S };
-    // Recompute metrics from serialized rows on load — no need to store separately
+    // Recompute metrics from serialized rows on load -- no need to store separately
     // But keep serialized rows for re-render
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toStore));
   } catch(e) { console.warn('localStorage write failed:', e); }
@@ -1167,13 +1167,13 @@ function renderNotablesFromData() {
   const slaClass = s => s === 'Yes' ? 'ok' : s === 'No' ? 'bad' : '';
   const rows = notables.map(n => {
     const chip = SEV_CHIP[n.sev] || '';
-    const sevHtml = chip ? `<span class="${chip}">${escHtml(n.sev)}</span>` : escHtml(n.sev || '—');
+    const sevHtml = chip ? `<span class="${chip}">${escHtml(n.sev)}</span>` : escHtml(n.sev || '--');
     return `<tr>
       <td><a href="https://basis.atlassian.net/browse/${escHtml(n.key)}" target="_blank" style="color:var(--accent);font-family:monospace;font-size:12px;text-decoration:none">${escHtml(n.key)}</a></td>
       <td>${sevHtml}</td>
-      <td style="font-size:12px">${escHtml(n.sum || '—')}</td>
-      <td style="font-size:12px">${escHtml(n.res || '—')}</td>
-      <td><span class="${slaClass(n.sla)}">${escHtml(n.sla || '—')}</span></td>
+      <td style="font-size:12px">${escHtml(n.sum || '--')}</td>
+      <td style="font-size:12px">${escHtml(n.res || '--')}</td>
+      <td><span class="${slaClass(n.sla)}">${escHtml(n.sla || '--')}</span></td>
     </tr>`;
   });
   if (rows.length === 0) {
