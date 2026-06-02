@@ -191,17 +191,9 @@ def planned_for_june(feature: dict) -> bool:
 
 
 def get_stream_name(feature: dict) -> str:
-    """Extract stream name from Aha initiative/custom field."""
-    # try Product Stream custom field first
-    for cf in feature.get("custom_fields", []) or []:
-        if cf.get("key") == "product_stream" or cf.get("name") == "Product Stream":
-            val = cf.get("value") or ""
-            if val:
-                return val.strip()
-    # fall back to first initiative
     inits = feature.get("initiatives", []) or []
     if inits:
-        return inits[0].get("name", "Unknown").strip()
+        return inits[0].get("name", "").strip()
     return "Unknown"
 
 
