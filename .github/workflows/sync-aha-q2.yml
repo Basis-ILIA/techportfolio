@@ -1,0 +1,46 @@
+name: Sync Aha Q2 Portfolio Data
+
+on:
+  schedule:
+    # Runs at 06:00 UTC every day (midnight Chicago / 2am ET)
+    - cron: '0 6 * * *'
+  # Also allow a manual run from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to push the updated file back
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Aha sync
+        env:
+          AHA_API_KEY:    ${{ secrets.AHA_API_KEY }}
+          AHA_SUBDOMAIN:  ${{ secrets.AHA_SUBDOMAIN }}
+          AHA_PRODUCT_ID: BTPDW
+        run: python fetch-q2-update.py
+
+      - name: Commit and push if data changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add q2-portfolio-update.html
+          # Only commit if there are actual changes
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: sync Q2 portfolio data $(date -u +%Y-%m-%d)"
+            git push
+          fi
