@@ -34,6 +34,15 @@ const NAV_ITEMS = [
     href: 'tech-roadmap.html',
     section: 'Roadmap',
     status: 'active',
+	children: [
+	  {
+		id: 'tech-portfolio',
+		label: 'Q2 Progress',
+		href: 'q2-portfolio-update.html',
+		section: 'Roadmap',
+		status: 'active',
+	  },	
+	],
   },
 
   // ─── Programs ────────────────────────────────────────────────
