@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Q2 2026 Portfolio Update &middot; Basis Tech Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="light"],[data-theme="dark"]{
+  --t:var(--text);--t2:var(--text-secondary);--t3:var(--text-muted);--t4:var(--text-faint);
+  --bd:var(--border);--bd-s:var(--border-faint);--bg-s:var(--bg-subtle);--bg-h:var(--bg-hover);
+  --ac:var(--accent);--ac-bg:var(--accent-bg);--ac-bd:var(--accent-border);
+  --g:var(--green);--g-bg:var(--green-bg);--g-bd:var(--green-border);
+  --am:var(--amber);--am-bg:var(--amber-bg);--am-bd:var(--amber-border);
+  --re:var(--red);--re-bg:var(--red-bg);--re-bd:var(--red-border);
+}
+
+/* ---- BADGES ---- */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:9999px;border:1px solid transparent}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.badge.green{background:var(--g-bg);color:var(--g);border-color:var(--g-bd)}
+.badge.amber{background:var(--am-bg);color:var(--am);border-color:var(--am-bd)}
+.badge.red{background:var(--re-bg);color:var(--re);border-color:var(--re-bd)}
+.badge.blue{background:var(--ac-bg);color:var(--ac);border-color:var(--ac-bd)}
+.badge.gray{background:var(--bg-s);color:var(--t3);border-color:var(--bd)}
+
+/* ---- RELEASE TABLE ---- */
+.rel-table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:4px}
+.rel-table th{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t4);padding:6px 10px;text-align:left;border-bottom:1px solid var(--bd);background:var(--bg-s)}
+.rel-table td{padding:8px 10px;border-bottom:1px solid var(--bd-s);color:var(--t2);vertical-align:top}
+.rel-table tr:last-child td{border-bottom:none}
+.rel-table tr:hover td{background:var(--bg-h)}
+.rel-table .pname{font-weight:500;color:var(--t)}
+.rel-table td:nth-child(3),.rel-table th:nth-child(3){text-align:center}
+.rel-table td:nth-child(4),.rel-table th:nth-child(4){text-align:right}
+
+/* ---- STREAM TABLE ---- */
+.stream-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:4px}
+.stream-tbl th{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t4);padding:7px 10px;text-align:left;border-bottom:1px solid var(--bd);background:var(--bg-s)}
+.stream-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd-s);color:var(--t2);vertical-align:middle}
+.stream-tbl tr:last-child td{border-bottom:none}
+.stream-tbl .sname{font-weight:500;color:var(--t)}
+.stream-tbl td.right{text-align:right}
+.stream-tbl td.center{text-align:center}
+.prog-wrap{display:flex;align-items:center;gap:8px}
+.prog-bar{flex:1;height:5px;background:var(--bd);border-radius:3px;overflow:hidden;min-width:60px}
+.prog-fill{height:100%;background:var(--ac);border-radius:3px}
+.prog-txt{font-size:11.5px;color:var(--t4);white-space:nowrap;min-width:30px;text-align:right}
+
+/* ---- GOAL TABLE ---- */
+.goal-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:4px}
+.goal-tbl th{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--t4);padding:7px 10px;text-align:left;border-bottom:1px solid var(--bd);background:var(--bg-s)}
+.goal-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd-s);color:var(--t2);vertical-align:top}
+.goal-tbl tr:last-child td{border-bottom:none}
+.goal-tbl tr.complete td{background:var(--g-bg)}
+.goal-tbl tr.watch td{background:var(--re-bg)}
+.goal-tbl .gname{font-weight:500;color:var(--t)}
+.goal-pct{font-size:13px;font-weight:600}
+.goal-pct.complete{color:var(--g)}
+.goal-pct.high{color:var(--g)}
+.goal-pct.mid{color:var(--am)}
+.goal-pct.low{color:var(--re)}
+.goal-pct.zero{color:var(--t4)}
+
+/* ---- TIER PILLS ---- */
+.tier1{background:#7c3aed1a;color:#7c3aed;border:1px solid #7c3aed33;border-radius:9999px;font-size:11px;font-weight:500;padding:2px 8px;white-space:nowrap}
+.tier2{background:var(--ac-bg);color:var(--ac);border:1px solid var(--ac-bd);border-radius:9999px;font-size:11px;font-weight:500;padding:2px 8px;white-space:nowrap}
+.tier3{background:var(--bg-s);color:var(--t3);border:1px solid var(--bd);border-radius:9999px;font-size:11px;font-weight:500;padding:2px 8px;white-space:nowrap}
+.tier-int{background:var(--bg-s);color:var(--t4);border:1px solid var(--bd);border-radius:9999px;font-size:11px;font-weight:500;padding:2px 8px;white-space:nowrap}
+[data-theme="dark"] .tier1{background:#7c3aed33;color:#c4b5fd}
+
+/* ---- CALLOUTS ---- */
+.notice{border:1px solid var(--am-bd);background:var(--am-bg);border-radius:6px;padding:10px 14px;font-size:12.5px;color:var(--t2);line-height:1.6;margin-bottom:16px}
+.notice strong{color:var(--am)}
+
+/* ---- SECTION MONTH HEADER ---- */
+.month-hd{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t4);padding:10px 0 6px;border-bottom:1px solid var(--bd);margin-bottom:0}
+
+/* ---- STAT CARDS ---- */
+.stat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+.stat-card{border:1px solid var(--bd);border-radius:8px;padding:14px 16px;background:var(--bg)}
+.stat-num{font-size:26px;font-weight:700;color:var(--t);letter-spacing:-.03em;line-height:1;margin-bottom:3px}
+.stat-lbl{font-size:11.5px;color:var(--t3);line-height:1.4}
+.stat-sub{font-size:11px;color:var(--t4);margin-top:2px}
+
+/* ---- CARD ---- */
+.card{border:1px solid var(--bd);border-radius:8px;padding:18px 20px;margin-bottom:12px;background:var(--bg);overflow:hidden}
+.card-title{font-size:13px;font-weight:600;color:var(--t);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+
+/* ---- GLOSSARY ---- */
+.glossary-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.glossary-tbl td{padding:8px 10px;border-bottom:1px solid var(--bd-s);vertical-align:top}
+.glossary-tbl td:first-child{font-weight:600;color:var(--t);white-space:nowrap;width:160px}
+.glossary-tbl td:last-child{color:var(--t2);line-height:1.55}
+.glossary-tbl tr:last-child td{border-bottom:none}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:760px){
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .rel-table td:nth-child(2){display:none}
+  .stream-tbl td:nth-child(4){display:none}
+  .goal-tbl td:nth-child(2){display:none}
+}
+</style>
+<link rel="stylesheet" href="shared.css">
+<script src="menu.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+
+<div class="page-tabs">
+  <button class="active" data-tab="summary">Summary</button>
+  <button data-tab="releases">Releases</button>
+  <button data-tab="streams">Stream Status</button>
+  <button data-tab="goals">Goal Progress</button>
+  <button data-tab="glossary">Glossary</button>
+  <div class="page-tabs-spacer"></div>
+  <div class="page-tabs-meta">
+    <span class="sync-dot green" id="syncDot"></span>
+    <span id="lastUpdated">Q2 2026</span>
+  </div>
+</div>
+
+<div class="subbar">
+  <span><strong id="sbShipped">20</strong> Shipped Q2</span>
+  <span><strong id="sbJune">24</strong> Planned for June</span>
+  <span><strong id="sbPct">15%</strong> Roadmap done</span>
+  <span><strong id="sbGoals">3/50</strong> Goals complete</span>
+  <span><strong id="sbTotal">231</strong> Total projects</span>
+  <div class="subbar-right">Q2 2026 Progress Report &nbsp;&middot;&nbsp; Source: Aha!</div>
+</div>
+
+<div class="page page-narrow">
+
+  <!-- ========== SUMMARY ========== -->
+  <div class="tab-panel active" id="tab-summary">
+    <h1>Q2 2026 Portfolio Update</h1>
+    <p class="page-sub">Summer roadmap progress report &middot; June 2026</p>
+
+    <div class="stat-grid" id="statGrid">
+      <div class="stat-card">
+        <div class="stat-num" id="s-shipped">20</div>
+        <div class="stat-lbl">Shipped in Q2</div>
+        <div class="stat-sub">April through June 1</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="s-june">24</div>
+        <div class="stat-lbl">Planned for June</div>
+        <div class="stat-sub">3 Signature Features</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="s-pct" style="color:var(--am)">15%</div>
+        <div class="stat-lbl">Q2-Q3 Roadmap done</div>
+        <div class="stat-sub">34 of 231 released</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="s-goals" style="color:var(--g)">3/50</div>
+        <div class="stat-lbl">Goals 100% complete</div>
+        <div class="stat-sub">6% of goals delivered</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="s-total">231</div>
+        <div class="stat-lbl">Total Q2-Q3 projects</div>
+        <div class="stat-sub">132 in active development</div>
+      </div>
+    </div>
+
+    <div class="section-heading">Overview</div>
+    <div class="card">
+      <p style="font-size:13.5px;line-height:1.65;color:var(--t2);margin:0">
+        The Q2-Q3 summer roadmap introduced <strong>Streams and Goals</strong> as an organizing framework. Since Q2 began in April, the team has shipped <strong id="ov-shipped">20</strong> projects across <strong>8 streams</strong>. June targets <strong id="ov-june">24</strong> more, including <strong>3 Signature Features</strong>. Overall roadmap completion sits at <strong id="ov-pct">15%</strong> (34 of 231 projects released), with <strong>132</strong> in active development. Three goals are fully delivered ahead of schedule.
+      </p>
+    </div>
+
+    <div class="section-heading">June Signature Features</div>
+    <div id="signatureCards"></div>
+
+    <div class="section-heading">Streams with 0% Released</div>
+    <div class="notice">
+      <strong>Note:</strong> Streams showing 0% released are not blocked. All have work actively in development with first deliveries expected in June.
+    </div>
+    <div id="zeroStreamCards"></div>
+  </div>
+
+  <!-- ========== RELEASES ========== -->
+  <div class="tab-panel" id="tab-releases">
+    <h1>Q2 Releases</h1>
+    <p class="page-sub">All projects released or planned April through June 2026.</p>
+
+    <div class="section-heading">April Releases &mdash; 13 projects</div>
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px">
+      <table class="rel-table" id="aprilTable"></table>
+    </div>
+
+    <div class="section-heading">May Releases &mdash; 6 projects</div>
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px">
+      <table class="rel-table" id="mayTable"></table>
+    </div>
+
+    <div class="section-heading">June &mdash; 1 released, 24 planned</div>
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px">
+      <table class="rel-table" id="juneTable"></table>
+    </div>
+  </div>
+
+  <!-- ========== STREAMS ========== -->
+  <div class="tab-panel" id="tab-streams">
+    <h1>Stream Status</h1>
+    <p class="page-sub">Q2-Q3 2026 roadmap progress by product stream.</p>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="stream-tbl" id="streamTable"></table>
+    </div>
+  </div>
+
+  <!-- ========== GOALS ========== -->
+  <div class="tab-panel" id="tab-goals">
+    <h1>Goal Progress</h1>
+    <p class="page-sub">3 of 50 active Q2-Q3 goals are fully complete (6% of goals delivered). Several more are progressing between 11% and 75%.</p>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="goal-tbl" id="goalTable"></table>
+    </div>
+  </div>
+
+  <!-- ========== GLOSSARY ========== -->
+  <div class="tab-panel" id="tab-glossary">
+    <h1>Glossary</h1>
+    <p class="page-sub">Definitions for terms used throughout the Q2 2026 Portfolio Update.</p>
+    <div class="card" style="padding:0;overflow:hidden">
+      <table class="glossary-tbl" id="glossaryTable"></table>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+BasisPortfolio.init('q2-update', { context: '<strong>Reports</strong> &middot; Q2 2026 Update' });
+</script>
+
+<script>
+// ============================================================
+//  DATA
+//  To auto-update this page via the fetch-aha-q2.py script,
+//  replace the Q2_DATA block between the markers below.
+// ============================================================
+// Q2_DATA_START
+const Q2_DATA = {
+  meta: {
+    generated: "2026-06-02",
+    shipped_q2: 20,
+    planned_june: 24,
+    roadmap_pct: 15,
+    goals_complete: 3,
+    goals_total: 50,
+    total_projects: 231,
+    in_development: 132
+  },
+  signature_june: [
+    { name: "Agentic Media Planning: GTM Support", stream: "Strategic and Tactical Media Planning", date: "Jun 17" },
+    { name: "DSP Activation and Execution Layer", stream: "Omni-Channel Media Execution", date: "Jun 24" },
+    { name: "FIL - NetSuite Integration - Financial Integration Definitions and File Based Exports - Phase 3", stream: "Financial Reconciliation", date: "Jun 30" }
+  ],
+  streams: [
+    { name: "Campaign Insights",               done: 24, total: 93, in_dev: 27 },
+    { name: "DSP Optimization and Performance", done: 2,  total: 9,  in_dev: 7  },
+    { name: "Financial Reconciliation",         done: 3,  total: 18, in_dev: 14 },
+    { name: "Data Pillar Core",                 done: 2,  total: 15, in_dev: 7  },
+    { name: "Measurement and Attribution",      done: 1,  total: 8,  in_dev: 7  },
+    { name: "CTV and Video",                    done: 1,  total: 12, in_dev: 6  },
+    { name: "Application Core",                 done: 1,  total: 14, in_dev: 11 },
+    { name: "Omni-Channel Media Execution",     done: 0,  total: 16, in_dev: 14 },
+    { name: "Strategic and Tactical Media Planning", done: 0, total: 23, in_dev: 18 },
+    { name: "Agent Core and AI Streams",        done: 0,  total: 7,  in_dev: 7  },
+    { name: "Supply Quality and Inventory",     done: 0,  total: 5,  in_dev: 5  },
+    { name: "Native DSP Execution",             done: 0,  total: 6,  in_dev: 5  },
+    { name: "Governance and Compliance",        done: 0,  total: 3,  in_dev: 3  },
+    { name: "Identity and Audience Management", done: 0,  total: 3,  in_dev: 3  }
+  ],
+  goals: [
+    { pct: 100, name: "Migrate CPR dashboards from Datorama - $167K annual cost reduction achieved",        stream: "Campaign Insights - PO-6 KR1",                    done: 6,  total: 6  },
+    { pct: 100, name: "SmartBid net-positive safeguard: turning SmartBid on is never a net-negative",       stream: "DSP Optimization and Performance - Supporting Metric PO-2", done: 1, total: 1 },
+    { pct: 100, name: "Increase percentage of conversions Basis can attribute by 10% when AIR is employed", stream: "Measurement and Attribution - PO-4 KR4",            done: 1,  total: 1  },
+    { pct: 75,  name: "Migrate CPR dashboards from Datorama to reduce tool cost by $167K",                  stream: "Campaign Insights - PO-6 KR1",                    done: 6,  total: 8  },
+    { pct: 67,  name: "Win ICPs with requested specialized reporting",                                       stream: "Campaign Insights",                               done: 2,  total: 3  },
+    { pct: 50,  name: "Basis-NetSuite automation for Miles Partnership",                                     stream: "Financial Reconciliation",                        done: 1,  total: 2  },
+    { pct: 50,  name: "Data-related features completed by stream teams without direct data team involvement",stream: "Data Pillar Core - PO-5 KR3",                    done: 1,  total: 2  },
+    { pct: 33,  name: "Improved SLAs and customer satisfaction for Data Out customer requests",              stream: "Campaign Insights",                               done: 1,  total: 3  },
+    { pct: 20,  name: "Basis-NetSuite automation for Boundless (3 more projects due June 30)",              stream: "Financial Reconciliation",                        done: 1,  total: 5  },
+    { pct: 20,  name: "Grow integration adoption and win ICPs with more depth and breadth of data integrations", stream: "Campaign Insights - PO-2 KR2",              done: 1,  total: 5  },
+    { pct: 20,  name: "Improve campaign under-delivery by 1.5% - campaigns deliver closer to intended budget", stream: "DSP Optimization and Performance - PO-2 KR2", done: 1,  total: 5  },
+    { pct: 14,  name: "Reduce Stream Team Integration Lead Time by 30% for integration updates",             stream: "Data Pillar Core - PO-5 KR2",                    done: 1,  total: 7  },
+    { pct: 12,  name: "Improve customer sentiment on Reporting",                                             stream: "Campaign Insights",                               done: 2,  total: 17 },
+    { pct: 11,  name: "Improve reporting workflow efficiency - satisfaction score from 70% to 80% (18 projects in development)", stream: "Campaign Insights - PO-1 KR7", done: 5, total: 46 },
+    { pct: 0,   name: "Unblock Prospect Acquisition for Prisma-dependent Agencies - 3 projects due June 30", stream: "Financial Reconciliation and Strategic Planning - PO-3 KR1", done: 0, total: 6, watch: true },
+    { pct: 0,   name: "Reduce time to create strategies by 50% for medium-sized campaigns",                  stream: "Strategic and Tactical Media Planning - PO-1 KR1", done: 0, total: 6 },
+    { pct: 0,   name: "Reduce time spent on DSP campaign management tasks by 20%",                          stream: "Omni-Channel Media Execution - PO-1 KR3",         done: 0,  total: 7  },
+    { pct: 0,   name: "Expand the number of customers with CTV campaigns using new reporting features to 20%", stream: "CTV and Video - PO-4 KR1",                   done: 0,  total: 4  },
+    { pct: 0,   name: "Drive Performance Lift on DSP Campaigns through SmartBid and Bid Shading",            stream: "DSP Optimization and Performance - PO-2 KR1",    done: 0,  total: 2  },
+    { pct: 0,   name: "Launch Prisma integration",                                                           stream: "Financial Reconciliation - PO-3",                done: 0,  total: 2  }
+  ],
+  releases: {
+    april: [
+      { name: "Updated Group and Tactic Pacing Analytics: Tactic Metrics",               stream: "DSP Optimization and Performance", status: "GA",       tier: "Enhancement" },
+      { name: "Datorama Deprecation - Dashboard Creation",                                stream: "Campaign Insights",                status: "GA",       tier: "Enhancement" },
+      { name: "BUDA - Google Ads - Raw Data Pipeline via IHUB",                          stream: "Data Pillar Core",                 status: "GA",       tier: "Enhancement" },
+      { name: "CPR Conversions Model - MCA Client Performance Google Ads Keyword Conversion Reporting", stream: "Campaign Insights",  status: "GA",       tier: "Enhancement" },
+      { name: "CPR Delivery Model - MCA Client Performance Google Ads Keyword Reporting", stream: "Campaign Insights",               status: "GA",       tier: "Enhancement" },
+      { name: "Basis Data Bridge - Reports and Insights DSP Performance Data Set on BDB (ICP Customers)", stream: "Campaign Insights", status: "GA",      tier: "Enhancement" },
+      { name: "Client-User Permissions Management",                                       stream: "Campaign Insights",                status: "GA",       tier: "Core Feature" },
+      { name: "FIL - NetSuite Integration - Financial Integration Definitions and File Based Exports - Phase 2", stream: "Financial Reconciliation", status: "GA", tier: "Signature Feature" },
+      { name: "Show all conversion fires in Log Level Data",                              stream: "Campaign Insights",                status: "GA",       tier: "Enhancement" },
+      { name: "Media Plan - Model and Templates",                                         stream: "Campaign Insights",                status: "GA",       tier: "Core Feature" },
+      { name: "Campaign Flowchart Visualization",                                         stream: "Campaign Insights",                status: "GA",       tier: "Enhancement" },
+      { name: "CPR Delivery Model (MCA Client Performance Reporting)",                   stream: "Campaign Insights",                status: "Internal", tier: "Internal" },
+      { name: "Storybook Replacement Docs Site",                                          stream: "Application Core",                 status: "Internal", tier: "Internal" }
+    ],
+    may: [
+      { name: "Advanced Reach Measurement - Political",                                   stream: "CTV and Video",                    status: "GA",       tier: "Enhancement" },
+      { name: "SmartBid Safeguards",                                                      stream: "DSP Optimization and Performance", status: "GA",       tier: "Enhancement" },
+      { name: "FIL - Revisionless Media Plan Synchronization for Integration Definitions", stream: "Financial Reconciliation",        status: "GA",       tier: "Internal" },
+      { name: "Datorama Deprecation - CPR Client Creators",                               stream: "Campaign Insights",                status: "Internal", tier: "Enhancement" },
+      { name: "Hyperlocal Names and Reporting (Phase 2)",                                 stream: "Campaign Insights",                status: "Internal", tier: "Enhancement" },
+      { name: "Data Governance Research and PoC",                                         stream: "Data Pillar Core",                 status: "Internal", tier: "Internal" }
+    ],
+    june: [
+      { name: "Advanced Identity Resolution Conversions (formerly Liveramp online closed-loop attribution)", stream: "Measurement and Attribution", status: "Beta", tier: "Core Feature", date: "Released" },
+      { name: "Agentic Media Planning: GTM Support",                                      stream: "Strategic and Tactical Media Planning", status: "Planned", tier: "Signature Feature", date: "Jun 17" },
+      { name: "DSP Activation and Execution Layer",                                       stream: "Omni-Channel Media Execution",      status: "Planned", tier: "Signature Feature", date: "Jun 24" },
+      { name: "FIL - NetSuite Integration - Financial Integration Definitions and File Based Exports - Phase 3", stream: "Financial Reconciliation", status: "Planned", tier: "Signature Feature", date: "Jun 30" },
+      { name: "FIL - Surface External (Vendor) Mapping for Media Planning",              stream: "Financial Reconciliation",         status: "Planned", tier: "Core Feature",      date: "Jun 2"  },
+      { name: "Tangerine - Surface External (Vendor) Mapping for Media Planning",        stream: "Strategic and Tactical Media Planning", status: "Planned", tier: "Core Feature", date: "Jun 2" },
+      { name: "Automated Email Notifications for Search Build Discrepancies Detected Through Two-Way Sync", stream: "Omni-Channel Media Execution", status: "Planned", tier: "Core Feature", date: "Jun 8" },
+      { name: "Microsoft Ads Reporting - Raw Data Pipeline Migration",                   stream: "Data Pillar Core",                 status: "Planned", tier: "Core Feature",      date: "Jun 30" },
+      { name: "FIL - Surface ERP Data to Media Planners (MP-114)",                       stream: "Financial Reconciliation",         status: "Planned", tier: "Core Feature",      date: "Jun 30" },
+      { name: "Universal Pixel in Google Tag Manager",                                   stream: "Measurement and Attribution",      status: "Planned", tier: "Enhancement",       date: "Jun 15" },
+      { name: "Report Hub: Make file download asynchronous",                             stream: "Campaign Insights",                status: "Planned", tier: "Enhancement",       date: "Jun 9"  },
+      { name: "Implement Model Name Alias to be Client-Facing",                          stream: "Campaign Insights",                status: "Planned", tier: "Enhancement",       date: "Jun 17" },
+      { name: "Omni Channel Conversion Details Model",                                   stream: "Campaign Insights",                status: "Planned", tier: "Enhancement",       date: "Jun 18" },
+      { name: "Programmatic Guaranteed: Add Reach and Freq Metrics on Analytics for PG", stream: "Campaign Insights",               status: "Planned", tier: "Enhancement",       date: "Jun 30" },
+      { name: "Gross Metrics for DSP Databridge data",                                   stream: "Campaign Insights",                status: "Planned", tier: "Enhancement",       date: "Jun 30" },
+      { name: "Agentic Infra - Improve Artifact Framework",                              stream: "AI: Strategic Planning Engine",    status: "Planned", tier: "Enhancement",       date: "Jun 11" },
+      { name: "Agentic Infra - Extract core agent to service",                           stream: "Agent Core",                       status: "Planned", tier: "Internal",          date: "Jun 24" },
+      { name: "Agentic Infra - Scalability of MCP Framework",                            stream: "Agent Core",                       status: "Planned", tier: "Internal",          date: "Jun 15" },
+      { name: "Transcoding Video Creatives (Political Videos) with Static Images",       stream: "CTV and Video",                    status: "Planned", tier: "Internal",          date: "Jun 23" },
+      { name: "MicroBI - Deprecation",                                                   stream: "Data Pillar Core",                 status: "Planned", tier: "Internal",          date: "Jun 30" },
+      { name: "BUDA - Enhancements 2026 1H",                                             stream: "Campaign Insights",                status: "Planned", tier: "Internal",          date: "Jun 30" },
+      { name: "Design System Instrumentation and Analytics",                             stream: "Application Core",                 status: "Planned", tier: "Internal",          date: "Jun 24" },
+      { name: "Reports and Insights - Research/Revisit UX for Report Creation",          stream: "Campaign Insights",                status: "Planned", tier: "Internal",          date: "Jun 15" }
+    ]
+  },
+  glossary: [
+    { term: "Beta",               def: "Available to a limited set of customers for early access and feedback before full release." },
+    { term: "GA (Generally Available)", def: "Released to all customers. Fully shipped and accessible in production." },
+    { term: "Goal",               def: "A specific outcome a stream is working to achieve, expressed as a measurable statement. Each goal maps to one or more projects." },
+    { term: "Internal Release",   def: "Deployed to production but limited to internal use. Typically a final release state for backend changes, infrastructure work, or foundational projects that are not customer-facing and will not be promoted to GA." },
+    { term: "KR (Key Result)",    def: "A specific, measurable outcome that defines success for a given Product Objective. For example, PO-1 KR1 is the first Key Result under Product Objective 1." },
+    { term: "PO (Product Objective)", def: "A high-level strategic objective for the product organization (e.g. PO-1, PO-2). Multiple Key Results roll up to each Product Objective." },
+    { term: "Q2-Q3 Roadmap",     def: "The summer 2026 product roadmap covering Q2 (April - June) and Q3 (July - September)." },
+    { term: "Stream",             def: "A logical grouping of related projects aligned to a product or technology area (e.g. Campaign Insights, Financial Reconciliation)." },
+    { term: "Supporting Metric",  def: "A leading indicator tracked alongside a Key Result to monitor progress, but not the primary success measure itself." },
+    { term: "Tier 1 - Signature Feature", def: "The highest-priority customer-facing releases with planned marketing and launch support." },
+    { term: "Tier 2 - Core Feature", def: "Significant customer-facing releases that deliver meaningful product value, with moderate communication support." },
+    { term: "Tier 3 - Enhancement", def: "Incremental improvements, fixes, and smaller additions. Released without a formal launch campaign." }
+  ]
+};
+// Q2_DATA_END
+
+// ============================================================
+//  HELPERS
+// ============================================================
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function tierBadge(tier) {
+  if (!tier) return '';
+  if (tier === 'Signature Feature') return '<span class="tier1">&#9733; Signature</span>';
+  if (tier === 'Core Feature')      return '<span class="tier2">Core</span>';
+  if (tier === 'Enhancement')       return '<span class="tier3">Enhancement</span>';
+  return '<span class="tier-int">Internal</span>';
+}
+
+function statusBadge(s) {
+  if (s === 'GA')      return '<span class="badge green">GA</span>';
+  if (s === 'Beta')    return '<span class="badge blue">Beta</span>';
+  if (s === 'Internal')return '<span class="badge blue">Internal</span>';
+  if (s === 'Planned') return '<span class="badge gray">Planned</span>';
+  return '<span class="badge gray">'+esc(s)+'</span>';
+}
+
+function pctClass(pct) {
+  if (pct === 100) return 'complete';
+  if (pct >= 50)   return 'high';
+  if (pct >= 20)   return 'mid';
+  if (pct > 0)     return 'low';
+  return 'zero';
+}
+
+// ============================================================
+//  RENDER FUNCTIONS
+// ============================================================
+function renderSummary() {
+  var m = Q2_DATA.meta;
+  // update stat cards
+  document.getElementById('s-shipped').textContent = m.shipped_q2;
+  document.getElementById('s-june').textContent    = m.planned_june;
+  document.getElementById('s-pct').textContent     = m.roadmap_pct + '%';
+  document.getElementById('s-goals').textContent   = m.goals_complete + '/' + m.goals_total;
+  document.getElementById('s-total').textContent   = m.total_projects;
+  // overview text
+  document.getElementById('ov-shipped').textContent = m.shipped_q2;
+  document.getElementById('ov-june').textContent    = m.planned_june;
+  document.getElementById('ov-pct').textContent     = m.roadmap_pct + '%';
+  // subbar
+  document.getElementById('sbShipped').textContent = m.shipped_q2;
+  document.getElementById('sbJune').textContent    = m.planned_june;
+  document.getElementById('sbPct').textContent     = m.roadmap_pct + '%';
+  document.getElementById('sbGoals').textContent   = m.goals_complete + '/' + m.goals_total;
+  document.getElementById('sbTotal').textContent   = m.total_projects;
+  // last updated
+  if (m.generated) {
+    var d = new Date(m.generated);
+    var fmt = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    document.getElementById('lastUpdated').textContent = 'Updated ' + fmt;
+  }
+
+  // signature feature cards
+  var sc = document.getElementById('signatureCards');
+  sc.innerHTML = Q2_DATA.signature_june.map(function(f) {
+    return '<div class="card" style="margin-bottom:10px;border-left:3px solid #7c3aed">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">'
+      + '<div>'
+      + '<div style="font-size:13.5px;font-weight:600;color:var(--t);margin-bottom:3px">'+esc(f.name)+'</div>'
+      + '<div style="font-size:12px;color:var(--t3)">'+esc(f.stream)+'</div>'
+      + '</div>'
+      + '<div style="text-align:right;flex-shrink:0"><span class="tier1">&#9733; Signature</span><div style="font-size:11.5px;color:var(--t4);margin-top:4px">'+esc(f.date)+'</div></div>'
+      + '</div></div>';
+  }).join('');
+
+  // zero-progress stream cards
+  var zs = Q2_DATA.streams.filter(function(s){ return s.done === 0; });
+  var zc = document.getElementById('zeroStreamCards');
+  zc.innerHTML = zs.map(function(s) {
+    return '<div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;padding:12px 16px">'
+      + '<div><div style="font-size:13px;font-weight:500;color:var(--t)">'+esc(s.name)+'</div>'
+      + '<div style="font-size:12px;color:var(--t3);margin-top:2px">'+s.in_dev+' projects in active development</div></div>'
+      + '<span class="badge amber">In Dev</span>'
+      + '</div>';
+  }).join('');
+}
+
+function renderRelTable(id, rows, showDate) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var thead = '<thead><tr>'
+    + '<th>Project</th><th>Stream</th>'
+    + (showDate ? '<th style="text-align:center">Target</th>' : '<th style="text-align:center">Status</th>')
+    + '<th style="text-align:right">Tier</th></tr></thead>';
+  var tbody = '<tbody>' + rows.map(function(r) {
+    var col3 = showDate
+      ? '<td style="text-align:center;white-space:nowrap;font-size:12px">' + esc(r.date || '') + '</td>'
+      : '<td style="text-align:center">' + statusBadge(r.status) + '</td>';
+    return '<tr><td class="pname">'+esc(r.name)+'</td>'
+      + '<td style="color:var(--t3);font-size:12px;white-space:nowrap">'+esc(r.stream)+'</td>'
+      + col3
+      + '<td style="text-align:right">'+tierBadge(r.tier)+'</td></tr>';
+  }).join('') + '</tbody>';
+  el.innerHTML = thead + tbody;
+}
+
+function renderStreams() {
+  var el = document.getElementById('streamTable');
+  if (!el) return;
+  var thead = '<thead><tr>'
+    + '<th>Stream</th><th>Done</th><th>Total</th>'
+    + '<th style="min-width:140px">Progress</th>'
+    + '<th style="text-align:right">In Dev</th>'
+    + '</tr></thead>';
+  var tbody = '<tbody>' + Q2_DATA.streams.map(function(s) {
+    var pct = s.total > 0 ? Math.round(s.done / s.total * 100) : 0;
+    var barColor = pct > 0 ? 'background:var(--g)' : 'background:var(--ac)';
+    return '<tr>'
+      + '<td class="sname">'+esc(s.name)+'</td>'
+      + '<td class="center" style="font-weight:600;color:'+(s.done>0?'var(--g)':'var(--t4)')+'">'+s.done+'</td>'
+      + '<td class="center" style="color:var(--t3)">'+s.total+'</td>'
+      + '<td><div class="prog-wrap"><div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%;'+barColor+'"></div></div>'
+      + '<div class="prog-txt">'+pct+'%</div></div></td>'
+      + '<td class="right"><span class="badge blue">'+s.in_dev+'</span></td>'
+      + '</tr>';
+  }).join('') + '</tbody>';
+  el.innerHTML = thead + tbody;
+}
+
+function renderGoals() {
+  var el = document.getElementById('goalTable');
+  if (!el) return;
+  var thead = '<thead><tr>'
+    + '<th style="width:52px">%</th>'
+    + '<th>Goal</th>'
+    + '<th>Stream / Note</th>'
+    + '<th style="text-align:right">Done</th>'
+    + '</tr></thead>';
+  var tbody = '<tbody>' + Q2_DATA.goals.map(function(g) {
+    var pc = pctClass(g.pct);
+    var trCls = g.pct === 100 ? ' class="complete"' : (g.watch ? ' class="watch"' : '');
+    var watchNote = g.watch ? ' <span style="font-size:11px;background:var(--re-bg);color:var(--re);border:1px solid var(--re-bd);border-radius:4px;padding:1px 6px">watch closely</span>' : '';
+    return '<tr'+trCls+'>'
+      + '<td><span class="goal-pct '+pc+'">'+g.pct+'%</span></td>'
+      + '<td class="gname">'+esc(g.name)+watchNote+'</td>'
+      + '<td style="color:var(--t3);font-size:12px">'+esc(g.stream)+'</td>'
+      + '<td style="text-align:right;font-size:12.5px;color:var(--t3)">'+g.done+'/'+g.total+'</td>'
+      + '</tr>';
+  }).join('') + '</tbody>';
+  el.innerHTML = thead + tbody;
+}
+
+function renderGlossary() {
+  var el = document.getElementById('glossaryTable');
+  if (!el) return;
+  el.innerHTML = '<tbody>'
+    + Q2_DATA.glossary.map(function(g) {
+        return '<tr><td>'+esc(g.term)+'</td><td>'+esc(g.def)+'</td></tr>';
+      }).join('')
+    + '</tbody>';
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+renderSummary();
+renderRelTable('aprilTable', Q2_DATA.releases.april, false);
+renderRelTable('mayTable',   Q2_DATA.releases.may,   false);
+renderRelTable('juneTable',  Q2_DATA.releases.june,  true);
+renderStreams();
+renderGoals();
+renderGlossary();
+
+// Tab switching
+document.querySelectorAll('.page-tabs button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.page-tabs button').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    var panel = document.getElementById('tab-' + btn.dataset.tab);
+    if (panel) panel.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  });
+});
+</script>
+</body>
+</html>
